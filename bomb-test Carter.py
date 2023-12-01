@@ -24,6 +24,8 @@ class Lcd(Frame):
         self._button = None # the pushbutton's state
         # setup the GUI
         self.setup()
+    def welcome(self):
+        self
 
     # sets up the LCD "GUI"
     def setup(self):
@@ -337,4 +339,5 @@ check()
 window.mainloop()
 
 print("The bomb has been turned off.")
+
 
