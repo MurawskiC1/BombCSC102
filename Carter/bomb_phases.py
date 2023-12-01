@@ -29,8 +29,8 @@ class Lcd(Frame):
         # we need to know about the pushbutton to turn off its LED when the program exits
         self._button = None
         # setup the initial "boot" GUI
-        self.setupBoot()
-    '''
+        self.welcome()
+    
     def erase(self):
         for widget in self.winfo_children():
             widget.destroy()
@@ -40,18 +40,19 @@ class Lcd(Frame):
         welcome.grid(row = 0, column = 0)
         title = Label(self,text="OBOMBA")
         title.grid(row = 1, column = 0)
-        begin = Button(self,text="BEGIN",command = self.password)
-        begin.grid(row = 0, column = 0)
-        
+        begin = tkinter.Button(self,text="BEGIN",command = self.password)
+        begin.grid(row = 2, column = 0)
+        self.pack(fill=BOTH, expand=True)
+
     def password(self):
         self.erase()
         label = Label(self, text='Password:')
         label.grid(row = 0, column = 0 )
-        border = Frame(self, bg='red')
-        start_password = Entry(highlightthickness=2)
+        border = super()(self, bg='red')
+        start_password = tkinter.Entry(highlightthickness=2)
         start_password.configure(highlightbackground = "red", highlightcolor= "red")
         start_password.grid(row=0, column=1)
-    '''
+    
         
     # sets up the LCD "boot" GUI
     def setupBoot(self):

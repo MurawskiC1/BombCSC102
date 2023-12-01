@@ -235,7 +235,7 @@ active_phases = NUM_PHASES
 exploding = False
 
 # "boot" the bomb
-gui.after(1000, bootup)
+#gui.after(1000, bootup)
 
 # display the LCD GUI
 window.mainloop()

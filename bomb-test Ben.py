@@ -208,13 +208,27 @@ class Toggles(PhaseThread):
         super().__init__(name)
         self._value = ""
         self._pins = pins # the toggle switch pins
+        self._image
+        BPD = 1 # Caller for the button to be pushed down. 
 
     # runs the thread
     def run(self):
         self._running = True
-        while (True):
+        while (True and BPD = 1 ):
             # get the toggle switch values (0->False, 1->True)
             self._value = "".join([str(int(pin.value)) for pin in self._pins])
+            
+            TF = Frame(self, width=WIDTH // 2, height=HEIGHT // 2)
+            Toggles.text = Text(TF, bg="white", state=DISABLED)
+            Toggles.text.pack(side=RIGHT)
+            
+            
+            canvas = Frame(self, width=WIDTH // 2, height = HEIGHT // 2)
+            Toggles.riddle=PhotoIMage(file="door.png")
+            Toggles.riddle.pack(side=LEFT)
+            
+            
+            
             sleep(0.1)
         self._running = False
 
