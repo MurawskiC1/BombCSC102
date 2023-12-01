@@ -23,9 +23,29 @@ class Lcd(Frame):
         self._timer = None  # a copy of the timer on the 7-segment display
         self._button = None # the pushbutton's state
         # setup the GUI
-        self.setup()
+        self.welcome()
+    def erase(self):
+        for widget in self.window.winfo_children():
+            widget.destroy()
+  
     def welcome(self):
-        self
+        self.erase()
+        welcome = Label(self.window,text="Welcome to")
+        welcome.grid(row = 0, column = 0)
+        title = Label(self.window,text="OBOMBA")
+        title.grid(row = 1, column = 0)
+        begin = Button(self.window,text="BEGIN",command = self.password)
+        begin.grid(row = 0, column = 0)
+        
+    def password(self):
+        self.erase()
+        label = Label(self.window, text='Password:')
+        label.grid(row = 0, column = 0 )
+        border = Frame(self.window, bg='red')
+        start_password = Entry(highlightthickness=2)
+        start_password.configure(highlightbackground = "red", highlightcolor= "red")
+        start_password.grid(row=0, column=1)
+        
 
     # sets up the LCD "GUI"
     def setup(self):
