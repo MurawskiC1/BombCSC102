@@ -8,6 +8,7 @@
 from bomb_configs import *
 # other imports
 from tkinter import *
+from tkinter import PhotoImage
 import tkinter
 from threading import Thread
 import pygame
@@ -29,6 +30,7 @@ class Lcd(Frame):
         # we need to know about the pushbutton to turn off its LED when the program exits
         self._button = None
         # setup the initial "boot" GUI
+        
         self.welcome()
     
     def erase(self):
@@ -36,22 +38,26 @@ class Lcd(Frame):
             widget.destroy()
   
     def welcome(self):
-        welcome = Label(self,text="Welcome to")
-        welcome.grid(row = 0, column = 0)
-        title = Label(self,text="OBOMBA")
-        title.grid(row = 1, column = 0)
+        welcome = Label(self,bg = "black", fg = "red" ,text="Welcome to")
+        welcome.pack()
+        title = Label(self,bg = "black", fg = "white" ,font=("Courier New", 50),text="OBOMBA")
+        title.pack()
         begin = tkinter.Button(self,text="BEGIN",command = self.password)
-        begin.grid(row = 2, column = 0)
+        begin.pack()
+        OBAMA = PhotoImage(file="O.png")
+        pic = Label(self, image =OBAMA)
+        pic.image = OBAMA
+        pic.pack(LEFT)
         self.pack(fill=BOTH, expand=True)
 
     def password(self):
         self.erase()
-        label = Label(self, text='Password:')
-        label.grid(row = 0, column = 0 )
-        border = super()(self, bg='red')
-        start_password = tkinter.Entry(highlightthickness=2)
-        start_password.configure(highlightbackground = "red", highlightcolor= "red")
-        start_password.grid(row=0, column=1)
+        label = Label(self,bg = "black", fg = "white" , text='Password:\n OBOMBA')
+        label.pack()
+        self.start_password = Label(self,bg = "black", fg="lawn green", text="OBOMBA")
+        self.start_password.pack(padx = 300)
+        self.pack(fill=BOTH, expand=True)
+        
     
         
     # sets up the LCD "boot" GUI
