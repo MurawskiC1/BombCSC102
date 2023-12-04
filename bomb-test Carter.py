@@ -213,6 +213,7 @@ class Button(PhaseThread):
         self._running = True
         while (True):
             # set the LED to the specified color
+            
             self._rgb[0].value = False if BUTTON_LED == "R" else True
             self._rgb[1].value = False if BUTTON_LED == "G" else True
             self._rgb[2].value = False if BUTTON_LED == "B" else True
