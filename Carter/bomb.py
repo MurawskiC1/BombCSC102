@@ -7,7 +7,15 @@
 # import the configs
 from bomb_configs import *
 # import the phases
-from bomb_phases import *
+
+import bomb_phases 
+from tkinter import *
+import tkinter
+from threading import Thread
+import pygame
+from time import sleep
+import os
+import sys
 
 ###########
 # functions
@@ -227,7 +235,11 @@ pygame.init()
 
 # initialize the LCD GUI
 window = Tk()
-gui = Lcd(window)
+
+gui = bomb_phases.Lcd(window)
+
+
+
 
 # initialize the bomb strikes, active phases (i.e., not yet defused), and if the bomb is exploding
 strikes_left = NUM_STRIKES
@@ -235,7 +247,7 @@ active_phases = NUM_PHASES
 exploding = False
 
 # "boot" the bomb
-gui.after(1000, bootup)
+#gui.after(1000, bootup)
 
 # display the LCD GUI
 window.mainloop()

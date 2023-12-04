@@ -14,26 +14,56 @@ import pygame
 from time import sleep
 import os
 import sys
+import bomb
 
 #########
 # classes
 #########
 # the LCD display GUI
 class Lcd(Frame):
-    def __init__(self, window):
+    def __init__(self, window):        
         super().__init__(window, bg="black")
         # make the GUI fullscreen
         window.attributes("-fullscreen", True)
+        
+        
         # we need to know about the timer (7-segment display) to be able to pause/unpause it
         self._timer = None
         # we need to know about the pushbutton to turn off its LED when the program exits
         self._button = None
         # setup the initial "boot" GUI
-        self.setupBoot()
-
+        self.welcome()
+        
+        
+    def erase(self):
+        for widget in self.winfo_children():
+            widget.destroy()
+    
+    def welcome(self):
+        welcome = Label(self,bg = "black", fg = "red" ,text="Welcome to")
+        welcome.pack()
+        title = Label(self,bg = "black", fg = "white" ,font=("Courier New", 50),text="OBOMBA")
+        title.pack()
+        begin = tkinter.Button(self,text="BEGIN",command = self.password)
+        begin.pack()
+        self.pack(fill=BOTH, expand=True)
+    
+    def password(self):
+        self.erase()
+        label = Label(self,bg = "black", fg = "white" , text='Password:')
+        label.pack()
+        self.start_password = Label(self,bg = "black", fg="lawn green", text="OBOMBA")
+        self.start_password.pack(padx = 300)
+        begin = tkinter.Button(self,text="BEGIN",command = self.setupBoot)
+        begin.pack()
+        self.pack(fill=BOTH, expand=True)
+    
+        
+        
     # sets up the LCD "boot" GUI
     def setupBoot(self):
-        # set column weights
+        self.erase()
+        # set column wets
         self.columnconfigure(0, weight=1)
         self.columnconfigure(1, weight=2)
         self.columnconfigure(2, weight=1)
@@ -41,6 +71,9 @@ class Lcd(Frame):
         self._lscroll = Label(self, bg="black", fg="white", font=("Courier New", 14), text="", justify=LEFT)
         self._lscroll.grid(row=0, column=0, columnspan=3, sticky=W)
         self.pack(fill=BOTH, expand=True)
+        bomb.bootup()
+
+        
 
     # sets up the LCD GUI
     def setup(self):
@@ -368,3 +401,7 @@ class Button(PhaseThread):
 class Toggles(NumericPhase):
     def __init__(self, component, target, display_length, name="Toggles"):
         super().__init__(name, component, target, display_length)
+
+    
+    
+    
