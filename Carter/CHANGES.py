@@ -32,8 +32,9 @@ class Lcd(Frame):
         # we need to know about the pushbutton to turn off its LED when the program exits
         self._button = None
         # setup the initial "boot" GUI
+
         
-        
+    '''     
     def erase(self):
         for widget in self.winfo_children():
             widget.destroy()
@@ -57,11 +58,11 @@ class Lcd(Frame):
         begin.pack()
         self.pack(fill=BOTH, expand=True)
     
-        
+    '''
         
     # sets up the LCD "boot" GUI
     def setupBoot(self):
-        self.erase()
+        #self.erase()
         # set column wets
         self.columnconfigure(0, weight=1)
         self.columnconfigure(1, weight=2)
@@ -101,18 +102,19 @@ class Lcd(Frame):
             self._bpause = tkinter.Button(self, bg="red", fg="white", font=("Courier New", 18), text="Pause", anchor=CENTER, command=self.pause)
             self._bpause.grid(row=6, column=0, pady=40)
             
-            self.wire = tkinter.Button(self, bg="red", fg="white", font=("Courier New", 18), text="Wire", anchor=CENTER, command=self.obamaDisplay)
-            self.wire.grid(row=6, column=1, pady=40)
+            #self.wire = tkinter.Button(self, bg="red", fg="white", font=("Courier New", 18), text="Wire", anchor=CENTER, command=self.obamaDisplay)
+           # self.wire.grid(row=6, column=1, pady=40)
             
             # the quit button
             self._bquit = tkinter.Button(self, bg="red", fg="white", font=("Courier New", 18), text="Quit", anchor=CENTER, command=self.quit)
             self._bquit.grid(row=6, column=2, pady=40)
-            
+    '''
     def obamaDisplay(self):
         self.erase()
         self.img = PhotoImage(file="Obama.png")
         self.image = Label(self, image=self.img)
         self.image.pack()
+    '''
             
     # lets us pause/unpause the timer (7-segment display)
     def setTimer(self, timer):
