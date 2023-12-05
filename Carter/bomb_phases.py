@@ -71,7 +71,27 @@ class Lcd(Frame):
         self._lscroll = Label(self, bg="black", fg="white", font=("Courier New", 14), text="", justify=LEFT)
         self._lscroll.grid(row=0, column=0, columnspan=3, sticky=W)
         self.pack(fill=BOTH, expand=True)
-        bomb.bootup()
+        self.bootup()
+        
+    def bootup(n=0):
+        # if we're not animating (or we're at the end of the bootup text)
+        if (not ANIMATE or n == len(boot_text)):
+            # if we're not animating, render the entire text at once (and don't process \x00)
+            if (not ANIMATE):
+                self._lscroll["text"] = boot_text.replace("\x00", "")
+            # configure the remaining GUI widgets
+            self.setup()
+            # setup the phase threads, execute them, and check their statuses
+            if (RPi):
+                self.after(1000, setup_phases)
+        # if we're animating
+        else:
+            # add the next character (but don't render \x00 since it specifies a longer pause)
+            if (boot_text[n] != "\x00"):
+                self._lscroll["text"] += boot_text[n]
+
+            # scroll the next character after a slight delay (\x00 is a longer delay)
+            self.after(25 if boot_text[n] != "\x00" else 750, bootup, n + 1)
 
         
 
