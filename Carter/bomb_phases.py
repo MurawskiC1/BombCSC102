@@ -14,7 +14,7 @@ import pygame
 from time import sleep
 import os
 import sys
-import bomb
+
 
 #########
 # classes
@@ -92,6 +92,7 @@ class Lcd(Frame):
 
             # scroll the next character after a slight delay (\x00 is a longer delay)
             self.after(25 if boot_text[n] != "\x00" else 750, bootup, n + 1)
+        self.setup()
 
         
 

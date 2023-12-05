@@ -8,14 +8,8 @@
 from bomb_configs import *
 # import the phases
 
-import bomb_phases 
-from tkinter import *
-import tkinter
-from threading import Thread
-import pygame
-from time import sleep
-import os
-import sys
+from bomb_phases import *
+
 
 ###########
 # functions
@@ -216,8 +210,7 @@ pygame.init()
 
 # initialize the LCD GUI
 window = Tk()
-
-gui = bomb_phases.Lcd(window)
+gui = Lcd(window)
 
 
 
