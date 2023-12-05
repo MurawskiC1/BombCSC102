@@ -229,13 +229,15 @@ pygame.init()
 window = Tk()
 gui = Lcd(window)
 
+
 # initialize the bomb strikes, active phases (i.e., not yet defused), and if the bomb is exploding
 strikes_left = NUM_STRIKES
 active_phases = NUM_PHASES
 exploding = False
 
 # "boot" the bomb
-gui.after(1000, bootup)
+gui.after(1000, gui.welcome)
+
 
 # display the LCD GUI
 window.mainloop()

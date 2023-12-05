@@ -14,7 +14,7 @@ import pygame
 from time import sleep
 import os
 import sys
-
+import bomb
 #########
 # classes
 #########
@@ -30,9 +30,35 @@ class Lcd(Frame):
         self._button = None
         # setup the initial "boot" GUI
         self.setupBoot()
-
+        
+    
+    def erase(self):
+        for widget in self.winfo_children():
+            widget.destroy()
+    
+    def welcome(self):
+        self.erase()
+        welcome = Label(self,bg = "black", fg = "red" ,text="Welcome to")
+        welcome.pack()
+        title = Label(self,bg = "black", fg = "white" ,font=("Courier New", 50),text="OBOMBA")
+        title.pack()
+        begin = tkinter.Button(self,text="BEGIN",command = self.password)
+        begin.pack()
+        self.pack(fill=BOTH, expand=True)
+    
+    def password(self):
+        self.erase()
+        label = Label(self,bg = "black", fg = "white" , text='Password:')
+        label.pack()
+        self.start_password = Label(self,bg = "black", fg="lawn green", text="OBOMBA")
+        self.start_password.pack(padx = 300)
+        begin = tkinter.Button(self,text="BEGIN",command = self.setupBoot)
+        begin.pack()
+        self.pack(fill=BOTH, expand=True)
+    
     # sets up the LCD "boot" GUI
     def setupBoot(self):
+        self.erase()
         # set column weights
         self.columnconfigure(0, weight=1)
         self.columnconfigure(1, weight=2)
@@ -41,6 +67,8 @@ class Lcd(Frame):
         self._lscroll = Label(self, bg="black", fg="white", font=("Courier New", 14), text="", justify=LEFT)
         self._lscroll.grid(row=0, column=0, columnspan=3, sticky=W)
         self.pack(fill=BOTH, expand=True)
+        self._lscroll.after(1000, bomb.bootup)
+        
 
     # sets up the LCD GUI
     def setup(self):
@@ -62,13 +90,23 @@ class Lcd(Frame):
         # the strikes left
         self._lstrikes = Label(self, bg="black", fg="#00ff00", font=("Courier New", 18), text="Strikes left: ")
         self._lstrikes.grid(row=5, column=2, sticky=W)
+        
         if (SHOW_BUTTONS):
             # the pause button (pauses the timer)
             self._bpause = tkinter.Button(self, bg="red", fg="white", font=("Courier New", 18), text="Pause", anchor=CENTER, command=self.pause)
             self._bpause.grid(row=6, column=0, pady=40)
+            
+            self.wire = tkinter.Button(self, bg="red", fg="white", font=("Courier New", 18), text="Wire", anchor=CENTER, command=self.obamaDisplay)
+            self.wire.grid(row=6, column=1, pady=40)
             # the quit button
             self._bquit = tkinter.Button(self, bg="red", fg="white", font=("Courier New", 18), text="Quit", anchor=CENTER, command=self.quit)
             self._bquit.grid(row=6, column=2, pady=40)
+            
+    def obamaDisplay(self):
+        self.erase()
+        self.img = PhotoImage(file="Obama.png")
+        self.image = Label(self, image=self.img)
+        self.image.pack()
 
     # lets us pause/unpause the timer (7-segment display)
     def setTimer(self, timer):
