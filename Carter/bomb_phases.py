@@ -38,19 +38,25 @@ class Lcd(Frame):
     
     def welcome(self):
         self.erase()
-        welcome = Label(self,bg = "black", fg = "red" ,text="Welcome to")
-        welcome.pack()
-        title = Label(self,bg = "black", fg = "white" ,font=("Courier New", 50),text="OBOMBA")
-        title.pack()
-        begin = tkinter.Button(self,text="BEGIN",command = self.password)
-        begin.pack()
+        welcome = Label(self,bg = "black", fg = "red" ,font=("Courier New", 40),text="Welcome to")
+        welcome.grid(row = 0,column = 1)
+        title = Label(self,bg = "black", fg = "white" ,font=("Courier New", 80),text="OBOMBA")
+        title.grid(row=1,column=1)
+        begin = tkinter.Button(self,text="BEGIN",font=("Courier New", 10),command = self.password)
+        begin.grid(row=3,column=1)
+        self.img = PhotoImage(file="flag.png")
+        self.img = self.img.subsample(3,3)
+        self.image1 = Label(self,bg="black", image=self.img)
+        self.image1.grid(row = 1, column = 0, rowspan=2)
+        self.image2 = Label(self,bg="black", image=self.img)
+        self.image2.grid(row = 1, column = 2, rowspan=2)
         self.pack(fill=BOTH, expand=True)
     
     def password(self):
         self.erase()
-        label = Label(self,bg = "black", fg = "white" , text='Password:')
+        label = Label(self,bg = "black", fg = "white" ,font=("Courier New", 20), text='Password:')
         label.pack()
-        self.start_password = Label(self,bg = "black", fg="lawn green", text="OBOMBA")
+        self.start_password = Label(self,bg = "black", fg="lawn green",font=("Courier New", 70), text="OBOMBA")
         self.start_password.pack(padx = 300)
         begin = tkinter.Button(self,text="BEGIN",command = self.setupBoot)
         begin.pack()
@@ -104,9 +110,14 @@ class Lcd(Frame):
             
     def obamaDisplay(self):
         self.erase()
+        self.columnconfigure(0, weight=1)
+        self.columnconfigure(1, weight=1)
+        self.columnconfigure(2, weight=2)
         self.img = PhotoImage(file="Obama.png")
-        self.image = Label(self, image=self.img)
-        self.image.pack()
+        self.image = Label(self,bg="black", image=self.img)
+        self.image.grid(row=0,column=0,rowspan=5)
+        self.spass = Label(self, bg="black", fg="white",font=("Courier New", 20),text = "Secret Password:")
+        self.spass.grid(row=0,column=1)
 
     # lets us pause/unpause the timer (7-segment display)
     def setTimer(self, timer):
