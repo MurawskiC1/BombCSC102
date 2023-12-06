@@ -102,7 +102,7 @@ if (RPi):
 def genSerial():
     # set the digits (used in the toggle switches phase)
     serial_digits = []
-    toggle_value = choice([1,2,4,8])
+    toggle_value = randint(1, 15)
     # the sum of the digits is the toggle value
     while (len(serial_digits) < 3 or toggle_value - sum(serial_digits) > 0):
         d = randint(0, min(9, toggle_value - sum(serial_digits)))
@@ -235,3 +235,4 @@ boot_text = f"Booting...\n\x00\x00"\
             f"*{' '.join(ascii_uppercase)}\n"\
             f"*{' '.join([str(n % 10) for n in range(26)])}\n"\
             f"Rendering phases...\x00"
+
