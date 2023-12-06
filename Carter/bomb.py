@@ -558,7 +558,7 @@ def check_phases():
         if (wires._defused):
             wires._running = False
             gui._lwires["fg"] = "#00ff00"
-            defused()
+            gui.obamaDisplay()
         # the phase has failed -> strike
         elif (wires._failed):
             strike()
