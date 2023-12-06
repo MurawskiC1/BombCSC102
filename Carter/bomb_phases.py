@@ -15,6 +15,7 @@ from time import sleep
 import os
 import sys
 import bomb
+import random as rng
 #########
 # classes
 #########
@@ -118,7 +119,16 @@ class Lcd(Frame):
         self.image.grid(row=0,column=0,rowspan=5)
         self.spass = Label(self, bg="black", fg="white",font=("Courier New", 20),text = "Secret Password:")
         self.spass.grid(row=0,column=1)
+        self.spass = tkinter.Button(self, bg="red", fg="white",font=("Courier New", 20),text = "Riddle", command = self.riddle)
+        self.spass.grid(row=0,column=3)
+        
+    def riddle(self):
+        self.riddle = "what riddle will be here?"
+        color = ["red","white","blue"]
+        self.box = Label(self,bg=rng.choice(color), fg="black",font=("Courier New", 50),text = self.riddle)
+        self.box.grid(row=1, column= 1, rowspan = 5, columnspan=2)
 
+        
     # lets us pause/unpause the timer (7-segment display)
     def setTimer(self, timer):
         self._timer = timer
