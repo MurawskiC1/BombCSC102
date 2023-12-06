@@ -297,9 +297,13 @@ class Timer(PhaseThread):
     def run(self):
         self._running = True
         while (self._running):
-            if self._value <= 55:
-                button.color ="G"
+
             if (not self._paused):
+                if self._value > 55:
+                    button.color = "B"
+                else:
+                    button.color = "R"
+                    print("should change")
                 # update the timer and display its value on the 7-segment display
                 self._update()
                 self._component.print(str(self))
@@ -390,6 +394,7 @@ class Button(PhaseThread):
         self._rgb = component_rgb
         # the pushbutton's randomly selected LED color
         self.color = color
+        
         # we need to know about the timer (7-segment display) to be able to determine correct pushbutton releases in some cases
         self._timer = timer
     @property
@@ -403,10 +408,11 @@ class Button(PhaseThread):
     def run(self):
         self._running = True
         # set the RGB LED color
-        self._rgb[0].value = False if self.color == "R" else True
-        self._rgb[1].value = False if self.color == "G" else True
-        self._rgb[2].value = False if self.color == "B" else True
+        
         while (self._running):
+            self._rgb[0].value = False if self.color == "R" else True
+            self._rgb[1].value = False if self.color == "G" else True
+            self._rgb[2].value = False if self.color == "B" else True
             # get the pushbutton's state
             self._value = self._component.value
             # it is pressed
