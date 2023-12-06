@@ -5,7 +5,7 @@
 #################################
 
 # import the configs
-from bomb_configs import *
+from fucked_configs import *
 # other imports
 from tkinter import *
 import tkinter
@@ -16,8 +16,7 @@ import os
 import sys
 import bomb
 import random as rng
-from Riddle_code import Question
-import random
+
 #########
 # classes
 #########
@@ -125,24 +124,10 @@ class Lcd(Frame):
         self.spass.grid(row=0,column=3)
         
     def riddle(self):
-        
-        q1 = ("What is the capital of France?", ["Berlin", "Paris", "London", "Madrid"], "Paris")
-        q2 = ("Which planet is the fourth going from the sun?", ["Earth", "Mars", "Venus", "Jupiter"], "Mars")
-        q3 = ("What is the largest mammal?", ["Elephant", "Blue Whale", "Giraffe", "Hippopotamus"], "Blue Whale")
-        q4 = ("Which one of these presidents wasn't shot in office?", ["Lincoln", "Roosevelt", "Garfield"], "Adams")
-        q5 = ("Choose one of the following doors, only one can you survive", [" A bear that just ate cocaine", " Three velociraptor that hasn't eaten in three days", "Batman with a killing rule"], "A tiger that hasn't eaten in five weeks")
-        q6 = (" What is the capital of Russia?", [ "St.Petersburg","Berlin","Kursk"], " Moscow")
-        q7 = (" How many offical sports teams does University of Tampa have?", ["17", "26", "13"], "20")
-        q8 = (" University of Tampa as of now has what percentage acceptance rate ?", ["48%", "56%", "58%"], "54%")
-        q9 = ( " Which of these presidents was seventh US president?", [" Theodore Roosevelt", " Abraham Lincoln", " Henry Ford"], "Andrew Jackson")
-        q10 = (" If I gave you the binary represensation of 00101001 what is the value ?", [ " 36", "56", "48"], "41")
-        questions = [q1, q2, q3, q4, q5, q6, q7, q8, q9, q10]
-        
-        self.riddle = Riddle_code.Question(random.choice(questions))
+        self.riddle = "Testing"
         color = ["red","white","blue"]
         self.box = Label(self,bg=rng.choice(color), fg="black",font=("Courier New", 50),text = self.riddle)
         self.box.grid(row=1, column= 1, rowspan = 5, columnspan=2)
-        
 
         
     # lets us pause/unpause the timer (7-segment display)
@@ -443,3 +428,4 @@ class Button(PhaseThread):
 class Toggles(NumericPhase):
     def __init__(self, component, target, display_length, name="Toggles"):
         super().__init__(name, component, target, display_length)
+
