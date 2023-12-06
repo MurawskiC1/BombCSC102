@@ -15,6 +15,7 @@ import tkinter
 from threading import Thread
 import pygame
 from time import sleep
+import time
 import random as rng
 import os
 import sys
@@ -77,7 +78,7 @@ class Lcd(Frame):
         self.erase()
         label = Label(self,bg = "black", fg = "white" ,font=("Courier New", 20), text='Password:')
         label.pack()
-        self.start_password = Label(self,bg = "black", fg="lawn green",font=("Courier New", 70), text="OBOMBA")
+        self.start_password = Label(self,bg = "black", fg="lawn green",font=("Courier New", 70), text="")
         self.start_password.pack(padx = 300)
         begin = tkinter.Button(self,text="BEGIN",command = self.setupBoot)
         begin.pack()
@@ -141,14 +142,14 @@ class Lcd(Frame):
         self.image.grid(row=0,column=0,rowspan=5)
         self.spass = Label(self, bg="black", fg="white",font=("Courier New", 20),text = "Secret Password:")
         self.spass.grid(row=0,column=1)
-        self.spass = tkinter.Button(self, bg="red", fg="white",font=("Courier New", 20),text = "Riddle", command = self.riddle)
-        self.spass.grid(row=0,column=3)
+        self.r = tkinter.Button(self, bg="red", fg="white",font=("Courier New", 20),text = "Riddle", command = self.riddle)
+        self.r.grid(row=1,column=3)
         
     def riddle(self):
         self.riddle = "what riddle will be here?"
         color = ["red","white","blue"]
         self.box = Label(self,bg=rng.choice(color), fg="black",font=("Courier New", 50),text = self.riddle)
-        self.box.grid(row=1, column= 1, rowspan = 5, columnspan=2)
+        self.box.grid(row=3, column= 1, rowspan = 5, columnspan=2)
 
         
     # lets us pause/unpause the timer (7-segment display)
@@ -450,6 +451,8 @@ class Button(PhaseThread):
     
     # runs the thread
     def run(self):
+        start = 0
+        end = 0 
         self._running = True
         p = ''
         password = 'michelleobama'
@@ -465,13 +468,21 @@ class Button(PhaseThread):
             # get the pushbutton's state
             self._value = self._component.value
             # it is pressed
+            if end-start >= 2:
+                if gui.phase == 3:
+                    gui.riddle()
+                start =0
+                end = 0
             if (self._value):
-                # note it
+                if self._pressed == False:
+                    start = time.time()
                 self._pressed = True
+            
             # it is released
             else:
                 # was it previously pressed?
                 if (self._pressed):
+                    end = time.time()
                     # check the release parameters
                     # for R, nothing else is needed
                     # for G or B, a specific digit must be in the timer (sec) when released
@@ -482,6 +493,7 @@ class Button(PhaseThread):
                         self._failed = True
                     # note that the pushbutton was released
                     self._pressed = False
+                    
             sleep(0.1)
 
     # returns the pushbutton's state as a string
