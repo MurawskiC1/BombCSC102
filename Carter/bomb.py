@@ -296,14 +296,18 @@ class Timer(PhaseThread):
     # runs the thread
     def run(self):
         self._running = True
+        count = 0 
         while (self._running):
 
             if (not self._paused):
-                if self._value > 55:
-                    button.color = "B"
-                else:
-                    button.color = "R"
-                    print("should change")
+                if self._value % 2:
+                    c = ["R","B","G"]
+                    
+                    button.color = c[count]
+                    count +=1
+                    if count == 4:
+                        count = 0
+                
                 # update the timer and display its value on the 7-segment display
                 self._update()
                 self._component.print(str(self))
