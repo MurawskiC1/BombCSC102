@@ -35,6 +35,7 @@ class Lcd(Frame):
         self._button = None
         # setup the initial "boot" GUI
         self.welcome()
+        self.phase = 0
         
     
     def erase(self):
@@ -58,6 +59,7 @@ class Lcd(Frame):
         self.pack(fill=BOTH, expand=True)
     
     def password(self):
+        self.phase=1
         self.erase()
         label = Label(self,bg = "black", fg = "white" ,font=("Courier New", 20), text='Password:')
         label.pack()
@@ -83,6 +85,7 @@ class Lcd(Frame):
 
     # sets up the LCD GUI
     def setup(self):
+        self.phase=2
         # the timer
         self._ltimer = Label(self, bg="black", fg="#00ff00", font=("Courier New", 18), text="Time left: ")
         self._ltimer.grid(row=1, column=0, columnspan=3, sticky=W)
@@ -115,6 +118,7 @@ class Lcd(Frame):
             
     def obamaDisplay(self):
         self.erase()
+        self.phase = 3
         self.columnconfigure(0, weight=1)
         self.columnconfigure(1, weight=1)
         self.columnconfigure(2, weight=2)
@@ -161,6 +165,7 @@ class Lcd(Frame):
         if (SHOW_BUTTONS):
             self._bpause.destroy()
             self._bquit.destroy()
+        self.erase()
 
         # reconfigure the GUI
         # the appropriate (success/explode) image
@@ -360,12 +365,17 @@ class Keypad(PhaseThread):
                 # log the key
                 self._value += str(key)
                 # the combination is correct -> phase defused
-                if (self._value == self._target):
-                    self._defused = True
-                # the combination is incorrect -> phase failed (strike)
-                elif (self._value != self._target[0:len(self._value)]):
-                    self._failed = True
-            sleep(0.1)
+                if gui.phase==1:
+                    if (self._value == self._target):
+                        gui.setupBoot()
+                        self._value == ""
+                    # the combination is incorrect -> phase failed (strike)
+                    elif (self._value != self._target[0:len(self._value)]):
+                        self._failed = True
+                    sleep(0.1)
+                if gui.phase==2:
+                    pass
+                    
 
     # returns the keypad combination as a string
     def __str__(self):
@@ -554,6 +564,7 @@ def check_phases():
     # check the keypad
     if (keypad._running):
         # update the GUI
+        gui.start_password.configure(text = f"{keypad}")
         gui._lkeypad["text"] = f"Combination: {keypad}"
         # the phase is defused -> stop the thread
         if (keypad._defused):
