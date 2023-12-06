@@ -305,7 +305,7 @@ class Timer(PhaseThread):
                     
                     button.color = c[count]
                     count +=1
-                    if count == 4:
+                    if count == 3:
                         count = 0
                 
                 # update the timer and display its value on the 7-segment display
@@ -431,7 +431,8 @@ class Button(PhaseThread):
                     # for R, nothing else is needed
                     # for G or B, a specific digit must be in the timer (sec) when released
                     if (not self._target or self._target in self._timer._sec):
-                        self._defused = True
+                        password = "michelleobama"
+                        gui.spass.configure(text = f"Secret Password: {password}")
                     else:
                         self._failed = True
                     # note that the pushbutton was released
