@@ -22,6 +22,20 @@ import sys
 
 #########
 # classes
+class Queue:
+    def __init__(self):
+        self._data = []
+    
+    def enqueue(self, d):
+        self._data.append(d)
+        
+    def dequeue(self):
+        if len(self._data) > 0:
+            temp = self._data[0]
+            del self._data[0]
+            return temp
+        else:
+            print('error')
 #########
 # the LCD display GUI
 class Lcd(Frame):
@@ -427,6 +441,11 @@ class Button(PhaseThread):
     # runs the thread
     def run(self):
         self._running = True
+        p = ''
+        password = 'michelleobama'
+        q = Queue()
+        for i in password:
+            q.enqueue(i)
         # set the RGB LED color
         
         while (self._running):
@@ -446,9 +465,9 @@ class Button(PhaseThread):
                     # check the release parameters
                     # for R, nothing else is needed
                     # for G or B, a specific digit must be in the timer (sec) when released
-                    if (not self._target or self._target in self._timer._sec):
-                        password = "michelleobama"
-                        gui.spass.configure(text = f"Secret Password: {password}")
+                    if (not self._target or self._target in self._timer._sec) and self.color == 'B':
+                        p = p + q.dequeue()
+                        gui.spass.configure(text = f"Secret Password: {p}")
                     else:
                         self._failed = True
                     # note that the pushbutton was released

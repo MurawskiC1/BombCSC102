@@ -208,20 +208,8 @@ button_color = "R"
 # appropriately set the target (R is None)
 button_target = None
 # G is the first numeric digit in the serial number
-if (button_color == "G"):
-    button_target = [ n for n in serial if n.isdigit() ][0]
-    # modify the wires target (G is to cut wires B and D)
-    #  ABCDE
-    #  10101 = 21
-    wires_target = 21
-# B is the last numeric digit in the serial number
-elif (button_color == "B"):
-    button_target = [ n for n in serial if n.isdigit() ][-1]
-    # modify the wires target (B is to cut all wires except B, C, and D)
-    #  ABCDE
-    #  01110 = 14
-    wires_target = 14
 
+wires_target=15
 if (DEBUG):
     print(f"Serial number: {serial}")
     print(f"Toggles target: {bin(toggles_target)[2:].zfill(4)}/{toggles_target}")
