@@ -6,7 +6,7 @@
 
 # constants
 DEBUG = True        # debug mode?
-RPi = False           # is this running on the RPi?
+RPi = True           # is this running on the RPi?
 ANIMATE = False       # animate the LCD text?
 SHOW_BUTTONS = True # show the Pause and Quit buttons on the main LCD GUI?
 COUNTDOWN = 60      # the initial bomb countdown value (seconds)
@@ -20,9 +20,12 @@ STRIKE = "./audio/strike.mp3"
 DEFUSED = "./audio/defused.mp3"
 TICK = "./audio/tick.mp3"
 
+
 # imports
 from random import randint, shuffle, choice
 from string import ascii_uppercase
+
+
 if (RPi):
     import board
     from adafruit_ht16k33.segments import Seg7x4
@@ -69,12 +72,14 @@ if (RPi):
 # 6 pins: 4, 17, 27, 22, 3V3, 3V3
 #         -BUT1- -BUT2-  --BUT3--
 if (RPi):
+    
     # the state pin (state pin is input and pulled down)
     component_button_state = DigitalInOut(board.D4)
     component_button_state.direction = Direction.INPUT
     component_button_state.pull = Pull.DOWN
     # the RGB pins
     component_button_RGB = [DigitalInOut(i) for i in (board.D17, board.D27, board.D22)]
+    
     for pin in component_button_RGB:
         # RGB pins are output
         pin.direction = Direction.OUTPUT
@@ -199,7 +204,7 @@ serial, toggles_target, wires_target = genSerial()
 keyword, cipher_keyword, rot, keypad_target, passphrase = genKeypadCombination()
 
 # generate the color of the pushbutton (which determines how to defuse the phase)
-button_color = choice(["R", "G", "B"])
+button_color = "R"
 # appropriately set the target (R is None)
 button_target = None
 # G is the first numeric digit in the serial number
