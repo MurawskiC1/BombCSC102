@@ -78,6 +78,8 @@ class Lcd(Frame):
         self.erase()
         label = Label(self,bg = "black", fg = "white" ,font=("Courier New", 20), text='Password:')
         label.pack()
+        
+        label.after(1000, setup_phases)
         self.start_password = Label(self,bg = "black", fg="lawn green",font=("Courier New", 70), text="")
         self.start_password.pack(padx = 300)
         begin = tkinter.Button(self,text="BEGIN",command = self.setupBoot)
@@ -520,8 +522,7 @@ def bootup(n=0):
         # configure the remaining GUI widgets
         gui.setup()
         # setup the phase threads, execute them, and check their statuses
-        if (RPi):
-            gui.after(1000, setup_phases)
+        
     # if we're animating
     else:
         # add the next character (but don't render \x00 since it specifies a longer pause)
