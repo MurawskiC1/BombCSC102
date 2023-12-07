@@ -375,12 +375,22 @@ class Keypad(PhaseThread):
                     sleep(0.1)
                 # log the key
                 self._value += str(key)
+                if gui.phase == 1:
+                    target = "62262"
+                    if key == "#":
+                        gui.start_password.configure(text = f"{self._value}")
+                        if (self._value == f"{target}#"):
+                            gui.setupBoot()
+                        self._value = ""        
+                    gui.start_password.configure(text = f"{self._value}")
+                '''
                 # the combination is correct -> phase defused
                 if (self._value == self._target):
                     self._defused = True
                 # the combination is incorrect -> phase failed (strike)
                 elif (self._value != self._target[0:len(self._value)]):
                     self._failed = True
+                '''
             sleep(0.1)
 
     # returns the keypad combination as a string
