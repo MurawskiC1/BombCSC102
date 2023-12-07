@@ -19,6 +19,7 @@ EXPLODING = "./audio/exploding.mp3"
 STRIKE = "./audio/strike.mp3"
 DEFUSED = "./audio/defused.mp3"
 TICK = "./audio/tick.mp3"
+PRES = "./audio/07 Hail to the Chief.mp3"
 
 
 # imports
