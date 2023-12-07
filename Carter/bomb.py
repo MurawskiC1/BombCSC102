@@ -610,90 +610,93 @@ def check_phases():
         # don't check any more phases
         return
     # check the keypad
-    if gui.phase == 2:
-        if (keypad._running):
-            # update the GUI
-
-                gui._lkeypad["text"] = f"Combination: {keypad}"
-                # the phase is defused -> stop the thread
-                if (keypad._defused):
-                    keypad._running = False
-                    gui._lkeypad["fg"] = "#00ff00"
-                    defused()
-                # the phase has failed -> strike
-                elif (keypad._failed):
-                    strike()
-                    # reset the keypad
-                    keypad._failed = False
-                    keypad._value = ""
-        # check the wires
-        if (wires._running):
-            # update the GUI
-                gui._lwires["text"] = f"Wires: {wires}"
-                # the phase is defused -> stop the thread
-                if (wires._defused):
-                    wires._running = False
-                    gui._lwires["fg"] = "#00ff00"
-                    defused()
-                # the phase has failed -> strike
-                elif (wires._failed):
-                    strike()
-                    # reset the wires
-                    wires._failed = False
-        # check the button
-        if (button._running):
-                # update the GUI
-                gui._lbutton["text"] = f"Button: {button}"
-                # the phase is defused -> stop the thread
-                if (button._defused):
-                    button._running = False
-                    gui._lbutton["fg"] = "#00ff00"
-                    defused()
-                # the phase has failed -> strike
-                elif (button._failed):
-                    strike()
-                    # reset the button
-                    button._failed = False
-        # check the toggles
-        if (toggles._running):
-                # update the GUI
-                gui._ltoggles["text"] = f"Toggles: {toggles}"
-                # the phase is defused -> stop the thread
-                if (toggles._defused):
-                    toggles._running = False
-                    gui._ltoggles["fg"] = "#00ff00"
-                    defused()
-                # the phase has failed -> strike
-                elif (toggles._failed):
-                    strike()
-                    # reset the toggles
-                    toggles._failed = False
-
-        # note the strikes on the GUI
+    if (keypad._running):
+        # update the GUI
         if gui.phase == 2:
-            gui._lstrikes["text"] = f"Strikes left: {strikes_left}"
-            # too many strikes -> explode!
-            if (strikes_left == 0):
-                # turn off the bomb and render the conclusion GUI
-                turn_off()
-                gui.after(1000, gui.conclusion, exploding, False)
-                # stop checking phases
-                return
-            # a few strikes left -> timer goes twice as fast!
-            elif (strikes_left == 2 and not exploding):
-                timer._interval = 0.5
-                gui._lstrikes["fg"] = "#ff0000"
-            # one strike left -> timer goes even faster!
-            elif (strikes_left == 1 and not exploding):
-                timer._interval = 0.25
+            gui.start_password.configure(text = f"{keypad}")
+            gui._lkeypad["text"] = f"Combination: {keypad}"
+            # the phase is defused -> stop the thread
+            if (keypad._defused):
+                keypad._running = False
+                gui._lkeypad["fg"] = "#00ff00"
+                defused()
+            # the phase has failed -> strike
+            elif (keypad._failed):
+                strike()
+                # reset the keypad
+                keypad._failed = False
+                keypad._value = ""
+    # check the wires
+    if (wires._running):
+        # update the GUI
+        if gui.phase == 2:
+            gui._lwires["text"] = f"Wires: {wires}"
+            # the phase is defused -> stop the thread
+            if (wires._defused):
+                wires._running = False
+                gui._lwires["fg"] = "#00ff00"
+                defused()
+            # the phase has failed -> strike
+            elif (wires._failed):
+                strike()
+                # reset the wires
+                wires._failed = False
+    # check the button
+    if (button._running):
+        if gui.phase == 2:
+            # update the GUI
+            gui._lbutton["text"] = f"Button: {button}"
+            # the phase is defused -> stop the thread
+            if (button._defused):
+                button._running = False
+                gui._lbutton["fg"] = "#00ff00"
+                defused()
+            # the phase has failed -> strike
+            elif (button._failed):
+                strike()
+                # reset the button
+                button._failed = False
+    # check the toggles
+    if (toggles._running):
+        if gui.phase == 2:
+            # update the GUI
+            gui._ltoggles["text"] = f"Toggles: {toggles}"
+            # the phase is defused -> stop the thread
+            if (toggles._defused):
+                toggles._running = False
+                gui._ltoggles["fg"] = "#00ff00"
+                defused()
+            # the phase has failed -> strike
+            elif (toggles._failed):
+                strike()
+                # reset the toggles
+                toggles._failed = False
 
-        # the bomb has been successfully defused!
-        if (active_phases == 0):
+    # note the strikes on the GUI
+    if gui.phase == 2:
+        gui._lstrikes["text"] = f"Strikes left: {strikes_left}"
+        # too many strikes -> explode!
+        if (strikes_left == 0):
             # turn off the bomb and render the conclusion GUI
             turn_off()
-            gui.after(100, gui.conclusion, exploding, True)
+            gui.after(1000, gui.conclusion, exploding, False)
             # stop checking phases
             return
+        # a few strikes left -> timer goes twice as fast!
+        elif (strikes_left == 2 and not exploding):
+            timer._interval = 0.5
+            gui._lstrikes["fg"] = "#ff0000"
+        # one strike left -> timer goes even faster!
+        elif (strikes_left == 1 and not exploding):
+            timer._interval = 0.25
+
+    # the bomb has been successfully defused!
+    if (active_phases == 0):
+        # turn off the bomb and render the conclusion GUI
+        turn_off()
+        gui.after(100, gui.conclusion, exploding, True)
+        # stop checking phases
+        return
 
     # check the phases again after a slight delay
     gui.after(100, check_phases)
