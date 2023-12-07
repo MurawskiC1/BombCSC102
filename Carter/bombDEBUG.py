@@ -383,14 +383,14 @@ class Keypad(PhaseThread):
                             gui.setupBoot()
                         self._value = ""        
                     gui.start_password.configure(text = f"{self._value}")
-                '''
-                # the combination is correct -> phase defused
-                if (self._value == self._target):
-                    self._defused = True
-                # the combination is incorrect -> phase failed (strike)
-                elif (self._value != self._target[0:len(self._value)]):
-                    self._failed = True
-                '''
+                if gui.phase == 2:
+                    # the combination is correct -> phase defused
+                    if (self._value == self._target):
+                        self._defused = True
+                    # the combination is incorrect -> phase failed (strike)
+                    elif (self._value != self._target[0:len(self._value)]):
+                        self._failed = True
+                
             sleep(0.1)
 
     # returns the keypad combination as a string
@@ -404,7 +404,28 @@ class Keypad(PhaseThread):
 class Wires(NumericPhase):
     def __init__(self, component, target, display_length, name="Wires"):
         super().__init__(name, component, target, display_length)
-
+    # runs the thread
+    def run(self):
+        self._running = True
+        while (self._running):
+            # get the component value
+            self._value = self._get_int_state()
+            # the component value is correct -> phase defused
+            if gui.phase == 2:
+                if (self._value == self._target):
+                    gui.obamaDisplay()
+            '''
+            if (self._value == self._target):
+                self._defused = True
+            # the component state has changed
+            elif (self._value != self._prev_value):
+                # one or more component states are incorrect -> phase failed (strike)
+                if (not self._check_state()):
+                    self._failed = True
+                # note the updated state
+                self._prev_value = self._value
+                '''
+            sleep(0.1)
     # returns the jumper wires state as a string
     def __str__(self):
         if (self._defused):
