@@ -51,6 +51,7 @@ class Lcd(Frame):
         self._timer = None
         # we need to know about the pushbutton to turn off its LED when the program exits
         self._button = None
+        self.ridc = 0
         
         # setup the initial "boot" GUI
         self.welcome()
@@ -162,24 +163,28 @@ class Lcd(Frame):
             #self._bquit = tkinter.Button(self, bg="red", fg="white", font=("Courier New", 18), text="Quit", anchor=CENTER, command=self.quit)
             self._bquit.grid(row=7, column=4, pady=40)
     def riddleprint(self):
-        '''
+        
         global fra
         if len(fra)>0:
-            self.riddle = rng.choice(fra):
+            self.riddle = rng.choice(fra)
             fra.remove(self.riddle)
-        '''
-        self.riddle = ["Question", ["q1","q2","q3","q4"]]
-        color = ["red","white","blue"]
-        self.box = Label(self,bg="blue", fg="white",font=("Courier New", 20),text = self.riddle[0])
+        if self.ridc > 0:
+            self.box.destroy()
+            self.a1.destroy()
+            self.a2.destroy()
+            self.a3.destroy()
+            self.a4.destroy()
+        self.box = Label(self,bg="blue", fg="white",font=("Courier New", 10),text = self.riddle.question)
         self.box.grid(row=1, column= 1, columnspan=4)
-        self.a1 = tkinter.Button(self, bg="red" ,fg = "white", font=("Courier New", 10), text =self.riddle[1][0])
+        self.a1 = tkinter.Button(self, bg="red" ,fg = "white", font=("Courier New", 10), text =self.riddle.options[0])
         self.a1.grid(row=2, column = 1)
-        self.a2 = tkinter.Button(self, bg="white" ,fg = "black", font=("Courier New", 10), text =self.riddle[1][1])
+        self.a2 = tkinter.Button(self, bg="white" ,fg = "black", font=("Courier New", 10), text =self.riddle.options[1])
         self.a2.grid(row=2, column = 2)
-        self.a3 = tkinter.Button(self, bg="blue" ,fg = "white", font=("Courier New", 10), text =self.riddle[1][2])
+        self.a3 = tkinter.Button(self, bg="blue" ,fg = "white", font=("Courier New", 10), text =self.riddle.options[2])
         self.a3.grid(row=2, column = 3)
-        self.a4 = tkinter.Button(self, bg="white" ,fg = "black", font=("Courier New", 10), text =self.riddle[1][3])
+        self.a4 = tkinter.Button(self, bg="white" ,fg = "black", font=("Courier New", 10), text =self.riddle.options[3])
         self.a4.grid(row=2, column = 4)
+        self.ridc +=1
 # lets us pause/unpause the timer (7-segment display)
     def setTimer(self, timer):
         self._timer = timer
@@ -483,6 +488,7 @@ class Button(PhaseThread):
         self.color = color
         # we need to know about the timer (7-segment display) to be able to determine correct pushbutton releases in some cases
         self._timer = timer
+        self.scount = 0 
     @property
     def color(self):
         return self._color
@@ -491,8 +497,9 @@ class Button(PhaseThread):
         self._color = n
     # runs the thread
     def run(self):
+        global qcount
         seen = False
-        scount = 0 
+        
         self._running = True
         start = 0
         end = 0 
@@ -503,6 +510,10 @@ class Button(PhaseThread):
             q.enqueue(i)
         while (self._running):
             # set the RGB LED color
+            if p == password and seen == True:
+                            self._defused = True
+            if self.scount >= qcount:
+                        seen = True
             self._rgb[0].value = False if self.color == "R" else True
             self._rgb[1].value = False if self.color == "G" else True
             self._rgb[2].value = False if self.color == "B" else True
@@ -510,12 +521,10 @@ class Button(PhaseThread):
             self._value = self._component.value
             if gui.phase == 3:
                 if end-start > 1:
-                    scount += 1
-                    print(f"hold {scount}")
+                    self.scount += 1
                     gui.riddleprint()
                     start = end
-                    if scount > 2:
-                        seen = True
+                    
                     
                 # it is pressed
                 if (self._value):
@@ -536,8 +545,6 @@ class Button(PhaseThread):
                             if n != "error" and n != None:
                                 p = p + n
                             gui.spass.configure(text = f"Secret Password:\n {p}")
-                        if p == password and seen == True:
-                            self._defused = True
                         if not self._target and self.color == 'R':
                             self._failed= True
      
