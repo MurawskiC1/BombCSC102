@@ -395,13 +395,15 @@ class Keypad(PhaseThread):
                 self._value += str(key)
                 if gui.phase == 1:
                     ipass = "62262"
-                    if key == "#" and crack == False:
-                        gui.start_password.configure(text = f"{self._value}")
-                        if (self._value == f"{ipass}#"):
-                            gui.setupBoot()
-                            crack = True
-                        self._value = ""        
                     gui.start_password.configure(text = f"{self._value}")
+                    if key == "#":
+                        gui.start_password.configure(text = "")
+                        if crack == False:
+                            if (self._value == f"{ipass}#"):
+                                gui.setupBoot()
+                                crack = True
+                            self._value = ""        
+                    
                 if gui.phase == 2 or gui.phase == 3:
                     # the combination is correct -> phase defused
                     if key == "#":
@@ -432,7 +434,7 @@ class Wires(NumericPhase):
             # get the component value
             self._value = self._get_int_state()
             # the component value is correct -> phase defused
-            if gui.phase == 2:
+            if gui.phase >= 2:
                 if (self._value == self._target):
                     self._defused = True
                     gui.obamaDisplay()
@@ -475,6 +477,7 @@ class Button(PhaseThread):
     # runs the thread
     def run(self):
         seen = False
+        scount = 0 
         self._running = True
         start = 0
         end = 0 
@@ -490,32 +493,39 @@ class Button(PhaseThread):
             self._rgb[2].value = False if self.color == "B" else True
             # get the pushbutton's state
             self._value = self._component.value
-            if end-start >= 1:
-                seen = True
-                gui.riddleprint()
-                start = end
-            # it is pressed
-            if (self._value):
-                if self._pressed == False:
-                    start = time.time()
-                # note it
-                self._pressed = True
-            # it is released
-            else:
-                # was it previously pressed?
-                if (self._pressed):
-                    end = time.time()
-                    # check the release parameters
-                    # for R, nothing else is needed
-                    # for G or B, a specific digit must be in the timer (sec) when released
-                    if (not self._target or self._target in self._timer._sec) and self.color == 'B':
-                        p = p + q.dequeue()
-                        gui.spass.configure(text = f"Secret Password:\n {p}")
+            if gui.phase == 3:
+                if end-start > 1:
+                    scount += 1
+                    print(f"hold {scount}")
+                    gui.riddleprint()
+                    start = end
+                    if scount > 2:
+                        seen = True
+                    
+                # it is pressed
+                if (self._value):
+                    if self._pressed == False:
+                        start = time.time()
+                    # note it
+                    self._pressed = True
+                # it is released
+                else:
+                    # was it previously pressed?
+                    if (self._pressed):
+                        end = time.time()
+                        # check the release parameters
+                        # for R, nothing else is needed
+                        # for G or B, a specific digit must be in the timer (sec) when released
+                        if (not self._target or self._target in self._timer._sec) and self.color == 'B':
+                            n = q.dequeue()
+                            if n != "error" and n != None:
+                                p = p + n
+                            gui.spass.configure(text = f"Secret Password:\n {p}")
                         if p == password and seen == True:
                             self._defused = True
-                    if not self._target and self.color == 'R':
-                        self._failed= True
- 
+                        if not self._target and self.color == 'R':
+                            self._failed= True
+     
 
                     # note that the pushbutton was released
                     self._pressed = False
@@ -532,7 +542,25 @@ class Button(PhaseThread):
 class Toggles(NumericPhase):
     def __init__(self, component, target, display_length, name="Toggles"):
         super().__init__(name, component, target, display_length)
-
+    
+    # runs the thread
+    def run(self):
+        self._running = True
+        while (self._running):
+            # get the component value
+            self._value = self._get_int_state()
+            # the component value is correct -> phase defused
+            if gui.phase == 3:
+                if (self._value == self._target):
+                    self._defused = True
+                # the component state has changed
+                elif (self._value != self._prev_value):
+                    # one or more component states are incorrect -> phase failed (strike)
+                    if (not self._check_state()):
+                        self._failed = True
+                    # note the updated state
+                    self._prev_value = self._value
+            sleep(0.1)
 
 
 
