@@ -132,40 +132,55 @@ class Lcd(Frame):
         self.phase = 2
     def obamaDisplay(self):
         self._lscroll.destroy()
-        self.phase = 3
-        self.columnconfigure(0, weight=1)
         self.columnconfigure(1, weight=1)
-        self.columnconfigure(2, weight=2)
+        self.columnconfigure(2, weight=1)
+        self.columnconfigure(3, weight=1)
+        self.columnconfigure(4, weight=1)
+        self.phase = 3
         self.img = PhotoImage(file="Obama.png")
         self.img = self.img.subsample(3,3)
         self.image = Label(self,bg="black", image=self.img)
-        self.image.grid(row=0,column=0,rowspan=2)
+        self.image.grid(row=0,column=0,rowspan=3)
         self.spass = Label(self, bg="black", fg="white",font=("Courier New", 20),text = "Secret Password:")
-        self.spass.grid(row=0,column=1)
+        self.spass.grid(row=0,column=1, columnspan=4, sticky=W)
         # the timer
-        self._ltimer.grid(row=3, column=0, sticky=W)
+        self._ltimer.grid(row=4, column=0,columnspan=1, sticky=W)
         # the keypad passphrase
-        self._lkeypad.grid(row=4, column=0, sticky=W)
+        self._lkeypad.grid(row=5, column=0,columnspan=1, sticky=W)
         # the jumper wires status
-        self._lwires.grid(row=3, column=2,  sticky=W)
+        self._lwires.grid(row=4, column=2, columnspan = 4,  sticky=W)
         # the pushbutton status
-        self._lbutton.grid(row=4, column=2, sticky=W)
+        self._lbutton.grid(row=5, column=2, columnspan = 4, sticky=W)
         # the toggle switches status
-        self._ltoggles.grid(row=5, column=0, sticky=W)
+        self._ltoggles.grid(row=6, column=0,columnspan=1, sticky=W)
+        self._lstrikes.grid(row=6, column=2, columnspan = 4, sticky=W)
         if (SHOW_BUTTONS):
             # the pause button (pauses the timer)
-            self._bpause = tkinter.Button(self, bg="red", fg="white", font=("Courier New", 18), text="Pause", anchor=CENTER, command=self.pause)
-            self._bpause.grid(row=6, column=0, pady=40)
+            #self._bpause = tkinter.Button(self, bg="red", fg="white", font=("Courier New", 18), text="Pause", anchor=CENTER, command=self.pause)
+            self._bpause.grid(row=7, column=0, pady=40)
             # the quit button
-            self._bquit = tkinter.Button(self, bg="red", fg="white", font=("Courier New", 18), text="Quit", anchor=CENTER, command=self.quit)
-            self._bquit.grid(row=6, column=2, pady=40)
+            #self._bquit = tkinter.Button(self, bg="red", fg="white", font=("Courier New", 18), text="Quit", anchor=CENTER, command=self.quit)
+            self._bquit.grid(row=7, column=4, pady=40)
     def riddleprint(self):
-        self.riddle = "what riddle will be here?"
+        '''
+        global fra
+        if len(fra)>0:
+            self.riddle = rng.choice(fra):
+            fra.remove(self.riddle)
+        '''
+        self.riddle = ["Question", ["q1","q2","q3","q4"]]
         color = ["red","white","blue"]
-        self.box = Label(self,bg=rng.choice(color), fg="black",font=("Courier New", 20),text = self.riddle)
-        self.box.grid(row=1, column= 1, columnspan=2)
-
-    # lets us pause/unpause the timer (7-segment display)
+        self.box = Label(self,bg="blue", fg="white",font=("Courier New", 20),text = self.riddle[0])
+        self.box.grid(row=1, column= 1, columnspan=4)
+        self.a1 = tkinter.Button(self, bg="red" ,fg = "white", font=("Courier New", 10), text =self.riddle[1][0])
+        self.a1.grid(row=2, column = 1)
+        self.a2 = tkinter.Button(self, bg="white" ,fg = "black", font=("Courier New", 10), text =self.riddle[1][1])
+        self.a2.grid(row=2, column = 2)
+        self.a3 = tkinter.Button(self, bg="blue" ,fg = "white", font=("Courier New", 10), text =self.riddle[1][2])
+        self.a3.grid(row=2, column = 3)
+        self.a4 = tkinter.Button(self, bg="white" ,fg = "black", font=("Courier New", 10), text =self.riddle[1][3])
+        self.a4.grid(row=2, column = 4)
+# lets us pause/unpause the timer (7-segment display)
     def setTimer(self, timer):
         self._timer = timer
 
