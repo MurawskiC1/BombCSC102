@@ -59,14 +59,14 @@ class Lcd(Frame):
     
     def welcome(self):
         self.erase()
-        welcome = Label(self,bg = "black", fg = "red" ,font=("Courier New", 40),text="Welcome to")
+        welcome = Label(self,bg = "black", fg = "red" ,font=("Courier New", 30),text="Welcome to")
         welcome.grid(row = 0,column = 1)
-        title = Label(self,bg = "black", fg = "white" ,font=("Courier New", 80),text="OBOMBA")
+        title = Label(self,bg = "black", fg = "white" ,font=("Courier New", 70),text="OBOMBA")
         title.grid(row=1,column=1)
         begin = tkinter.Button(self,text="BEGIN",font=("Courier New", 10),command = self.password)
         begin.grid(row=3,column=1)
         self.img = PhotoImage(file="flag.png")
-        self.img = self.img.subsample(3,3)
+        self.img = self.img.subsample(7,7)
         self.image1 = Label(self,bg="black", image=self.img)
         self.image1.grid(row = 1, column = 0, rowspan=2)
         self.image2 = Label(self,bg="black", image=self.img)
@@ -81,7 +81,7 @@ class Lcd(Frame):
         
         label.after(1000, setup_phases)
         self.start_password = Label(self,bg = "black", fg="lawn green",font=("Courier New", 70), text="")
-        self.start_password.pack(padx = 300)
+        self.start_password.pack()
         begin = tkinter.Button(self,text="BEGIN",command = self.setupBoot)
         begin.pack()
         self.pack(fill=BOTH, expand=True)
@@ -89,7 +89,7 @@ class Lcd(Frame):
     # sets up the LCD "boot" GUI
     def setupBoot(self):
         self.erase()
-        self.phase=2
+        self.phases = 2
         # set column weights
         self.columnconfigure(0, weight=1)
         self.columnconfigure(1, weight=2)
@@ -371,6 +371,7 @@ class Keypad(PhaseThread):
     # runs the thread
     def run(self):
         self._running = True
+        cracked = False
         while (self._running):
             # process keys when keypad key(s) are pressed
             if (self._component.pressed_keys):
@@ -386,17 +387,25 @@ class Keypad(PhaseThread):
                 self._value += str(key)
                 
                 # the combination is correct -> phase defused
-                if gui.phase == 1:
-                    gui.start_password.configure(text = f"{self._value}")
-                    if (self._value == "62262"):
-                        gui.setupBoot()
-                        self._value == ""
+                if gui.phase == 1 and cracked == False:
+                    target = "62262"
+                    if key == "#":
+                        gui.start_password.configure(text = f"{self._value}")
+                        if (self._value == "62262#"):
+                            gui.setupBoot()
+                            cracked = True
+                            self._value == ""
+                        self._value = ""
+                        
+                    else:
+                        gui.start_password.configure(text = f"{self._value}")
+                    
+                        '''
                     # the combination is incorrect -> phase failed (strike)
-                    elif (self._value != self._target[0:len(self._value)]):
+                    elif (self._value != target[0:len(self._value)]):
                         self._failed = True
+                        '''
                     sleep(0.1)
-                if gui.phase==2:
-                    pass
                     
 
     # returns the keypad combination as a string
