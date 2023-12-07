@@ -49,9 +49,8 @@ class Lcd(Frame):
         # we need to know about the pushbutton to turn off its LED when the program exits
         self._button = None
         # setup the initial "boot" GUI
-        self.phase = 0
         self.welcome()
-        
+        self.phase = 0
         
     
     def erase(self):
@@ -594,16 +593,15 @@ def check_phases():
     if (timer._running):
         # update the GUI
         if gui.phase == 2:
+            # play the exploding audio at t-10s
+            if (not exploding and timer._interval * timer._value <= 11.25):
+                exploding = True
+                component_7seg.blink_rate = 1
+                pygame.mixer.music.load(EXPLODING)
+                pygame.mixer.music.play(1)
+            
             gui._ltimer["text"] = f"Time left: {timer}"
             gui._ltimer["fg"] = "#ff0000"
-            # play the exploding audio at t-10s
-        if (not exploding and timer._interval * timer._value <= 11.25):
-            exploding = True
-            component_7seg.blink_rate = 1
-            pygame.mixer.music.load(EXPLODING)
-            pygame.mixer.music.play(1)
-            
-            
     else:
         # the countdown has expired -> explode!
         # turn off the bomb and render the conclusion GUI
@@ -612,71 +610,67 @@ def check_phases():
         # don't check any more phases
         return
     # check the keypad
-   
+    
     if (keypad._running):
         # update the GUI
         if gui.phase == 2:
             gui._lkeypad["text"] = f"Combination: {keypad}"
-        # the phase is defused -> stop the thread
-        if (keypad._defused):
-            keypad._running = False
-            if gui.phase == 2:
+            # the phase is defused -> stop the thread
+            if (keypad._defused):
+                keypad._running = False
                 gui._lkeypad["fg"] = "#00ff00"
-            defused()
-        # the phase has failed -> strike
-        elif (keypad._failed):
-            strike()
-            # reset the keypad
-            keypad._failed = False
-            keypad._value = ""
+                defused()
+            # the phase has failed -> strike
+            elif (keypad._failed):
+                strike()
+                # reset the keypad
+                keypad._failed = False
+                keypad._value = ""
     # check the wires
     if (wires._running):
         # update the GUI
         if gui.phase == 2:
             gui._lwires["text"] = f"Wires: {wires}"
-        # the phase is defused -> stop the thread
-        if (wires._defused):
-            wires._running = False
-            if gui.phase == 2:
+            # the phase is defused -> stop the thread
+            if (wires._defused):
+                wires._running = False
                 gui._lwires["fg"] = "#00ff00"
-            defused()
-        # the phase has failed -> strike
-        elif (wires._failed):
-            strike()
-            # reset the wires
-            wires._failed = False
+                defused()
+            # the phase has failed -> strike
+            elif (wires._failed):
+                strike()
+                # reset the wires
+                wires._failed = False
     # check the button
     if (button._running):
-        # update the GUI
+            # update the GUI
         if gui.phase == 2:
             gui._lbutton["text"] = f"Button: {button}"
-        # the phase is defused -> stop the thread
-        if (button._defused):
-            button._running = False
-            if gui.phase == 2:
+            # the phase is defused -> stop the thread
+            if (button._defused):
+                button._running = False
                 gui._lbutton["fg"] = "#00ff00"
-            defused()
-        # the phase has failed -> strike
-        elif (button._failed):
-            strike()
-            # reset the button
-            button._failed = False
+                defused()
+            # the phase has failed -> strike
+            elif (button._failed):
+                strike()
+                # reset the button
+                button._failed = False
     # check the toggles
     if (toggles._running):
-        # update the GUI
+            # update the GUI
         if gui.phase == 2:
             gui._ltoggles["text"] = f"Toggles: {toggles}"
-        # the phase is defused -> stop the thread
-        if (toggles._defused):
-            toggles._running = False
-            if gui.phase == 2:
+            # the phase is defused -> stop the thread
+            if (toggles._defused):
+                toggles._running = False
                 gui._ltoggles["fg"] = "#00ff00"
-            defused()
-        # the phase has failed -> strike
-        elif (toggles._failed):
-            strike()
-            # reset the toggles
-            toggles._failed = False
+                defused()
+            # the phase has failed -> strike
+            elif (toggles._failed):
+                strike()
+                # reset the toggles
+                toggles._failed = False
 
         # note the strikes on the GUI
         if gui.phase == 2:
