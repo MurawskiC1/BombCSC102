@@ -456,7 +456,13 @@ class Button(PhaseThread):
     # runs the thread
     def run(self):
         self._running = True
-        
+        start = 0
+        end = 0 
+        p =''
+        password = 'michelleobama'
+        q = Queue()
+        for i in password:
+            q.enqueue(i)
         while (self._running):
             # set the RGB LED color
             self._rgb[0].value = False if self.color == "R" else True
@@ -466,19 +472,27 @@ class Button(PhaseThread):
             self._value = self._component.value
             # it is pressed
             if (self._value):
+                if self._pressed == False:
+                    start = time.time()
                 # note it
                 self._pressed = True
             # it is released
             else:
                 # was it previously pressed?
                 if (self._pressed):
+                    end = time.time()
+                    start = end
                     # check the release parameters
                     # for R, nothing else is needed
                     # for G or B, a specific digit must be in the timer (sec) when released
-                    if (not self._target or self._target in self._timer._sec):
+                    if (not self._target or self._target in self._timer._sec) and self.color == 'B':
+                        p = p + q.dequeue()
+                        gui.spass.configure(text = f"Secret Password:\n {p}")
+                    '''    
                         self._defused = True
                     else:
                         self._failed = True
+                    '''
                     # note that the pushbutton was released
                     self._pressed = False
             sleep(0.1)
