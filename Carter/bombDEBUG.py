@@ -166,6 +166,7 @@ class Lcd(Frame):
         while (not exploding and pygame.mixer.music.get_busy()):
             sleep(0.1)
         # destroy/clear widgets that are no longer needed
+        '''
         self._lscroll["text"] = ""
         self._ltimer.destroy()
         self._lkeypad.destroy()
@@ -176,7 +177,8 @@ class Lcd(Frame):
         if (SHOW_BUTTONS):
             self._bpause.destroy()
             self._bquit.destroy()
-
+        '''
+        self.erase()
         # reconfigure the GUI
         # the appropriate (success/explode) image
         if (success):
@@ -313,6 +315,13 @@ class Timer(PhaseThread):
         self._running = True
         while (self._running):
             if (not self._paused):
+                #change button color
+                if self._value % 2 and gui.phase > 2:
+                    c = ["R","B","G"]
+                    button.color = c[count]
+                    count +=1
+                    if count == 3:
+                        count = 0
                 # update the timer and display its value on the 7-segment display
                 self._update()
                 self._component.print(str(self))
