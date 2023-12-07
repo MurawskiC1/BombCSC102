@@ -6,7 +6,7 @@
 
 # constants
 DEBUG = True        # debug mode?
-RPi = True          # is this running on the RPi?
+RPi = False        # is this running on the RPi?
 ANIMATE = False       # animate the LCD text?
 SHOW_BUTTONS = False # show the Pause and Quit buttons on the main LCD GUI?
 COUNTDOWN = 120     # the initial bomb countdown value (seconds)
@@ -195,7 +195,67 @@ def genKeypadCombination():
 #  toggles_target: the toggles phase defuse value
 #  wires_target: the wires phase defuse value
 serial, toggles_target, wires_target = genSerial()
-toggles_target = 8
+
+class Question:
+    def __init__(self, question, options, correct_answer):
+        self.question = question
+        self.options = options
+        self.correct_answer = correct_answer
+
+    def shuffle_options(self):
+        # If correct answer is already in options, remove it temporarily
+        if self.correct_answer in self.options:
+            self.options.remove(self.correct_answer)
+        # Include the correct answer in the options before shuffling
+        options_with_correct_answer = self.options + [self.correct_answer]
+        # Shuffle the options randomly
+        random.shuffle(options_with_correct_answer)
+        # Update the options attribute with the shuffled list
+        self.options = options_with_correct_answer
+
+    def display_question(self):
+        print(self.question)
+        for i, option in enumerate(self.options, start=1):
+            print(f"{i}. {option}")
+
+    def get_correct_answer(self):
+        # Search for the index of the correct answer in the options
+        correct_index = self.options.index(self.correct_answer)
+        # Return the index + 1 (to match user input numbering)
+        return correct_index + 1
+
+q1 = Question("What is the capital of France?", ["Berlin", "Paris", "London", "Madrid"], "Paris")
+q2 = Question("Which planet is the fourth going from the sun?", ["Mars", "Earth", "Venus", "Jupiter"], "Mars")
+q3 = Question("What is the largest mammal?", ["Elephant", "Blue Whale ", "Giraffe", "Hippopotamus"], "Blue Whale")
+q4 = Question("Which one of these presidents wasn't shot in office?", ["Adams", "Lincoln", "Roosevelt", "Garfield"], "Adams")
+q5 = Question("Choose one of the following doors, only one can you survive", [" A bear that just ate cocaine", " Three velociraptor that hasn't eaten in three days", "Batman with a killing rule"], "A tiger that hasn't eaten in five weeks")
+q6 = Question(" What is the capital of Russia?", [ "St.Petersburg","Berlin","Kursk"], " Moscow")
+q7 = Question(" How many offical sports teams does University of Tampa have?", ["17", "20", "26", "13"], "20")
+q8 = Question(" University of Tampa as of now has what percentage acceptance rate ?", ["48%",  "56%", "58%"], "54%")
+q9 = Question( " Which of these presidents was seventh US president?", [" Theodore Roosevelt", " Andrew Jackson ", "Abraham Lincoln", " Henry Ford"], "Andrew Jackson")
+q10 = Question(" If I gave you the binary represensation of 00101001 what is the value ?", [ " 36", "56", "48"], "41")
+
+riddles =["Question",[q1,q2,q3,q4,q5,q6,q7,q8,q9,q10],"answer"]
+
+fra = []
+temp = toggles_target
+
+if (temp - 8)!=0:
+    rc_1 = choice([q1,q2,q3])
+    fra.append(rc_1)
+    temp -= 8
+if (temp -4)!=0:
+    rc_2 = choice([q4,q5])
+    fra.append(rc_2)
+    temp -= 4
+if (temp - 2) != 0:
+    rc_3 = choice([q6,q7])
+    fra.append(rc_3)
+    temp -= 2 
+if (temp -1) !=0:
+    rc_4 = choice([q9,q8,q10])
+    fra.append(rc_4)
+print(fra)
 # generate the combination for the keypad phase
 #  keyword: the plaintext keyword for the lookup table
 #  cipher_keyword: the encrypted keyword for the lookup table
