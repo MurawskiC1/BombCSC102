@@ -8,7 +8,7 @@
 DEBUG = True        # debug mode?
 RPi = True          # is this running on the RPi?
 ANIMATE = False       # animate the LCD text?
-SHOW_BUTTONS = True # show the Pause and Quit buttons on the main LCD GUI?
+SHOW_BUTTONS = False # show the Pause and Quit buttons on the main LCD GUI?
 COUNTDOWN = 60      # the initial bomb countdown value (seconds)
 NUM_STRIKES = 5      # the total strikes allowed before the bomb "explodes"
 NUM_PHASES = 4       # the total number of initial active bomb phases
@@ -195,7 +195,7 @@ def genKeypadCombination():
 #  toggles_target: the toggles phase defuse value
 #  wires_target: the wires phase defuse value
 serial, toggles_target, wires_target = genSerial()
-
+toggles_target = 8
 # generate the combination for the keypad phase
 #  keyword: the plaintext keyword for the lookup table
 #  cipher_keyword: the encrypted keyword for the lookup table
@@ -203,9 +203,9 @@ serial, toggles_target, wires_target = genSerial()
 #  keypad_target: the keypad phase defuse value (combination)
 #  passphrase: the target plaintext passphrase
 keyword, cipher_keyword, rot, keypad_target, passphrase = genKeypadCombination()
-
+keypad_target = "1234#"
 # generate the color of the pushbutton (which determines how to defuse the phase)
-button_color = "R"
+button_color = "B"
 # appropriately set the target (R is None)
 button_target = None
 # G is the first numeric digit in the serial number

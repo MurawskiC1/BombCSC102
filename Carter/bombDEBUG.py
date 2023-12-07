@@ -51,6 +51,7 @@ class Lcd(Frame):
         self._timer = None
         # we need to know about the pushbutton to turn off its LED when the program exits
         self._button = None
+        
         # setup the initial "boot" GUI
         self.welcome()
     def erase(self):
@@ -81,8 +82,9 @@ class Lcd(Frame):
         label.after(500, setup_phases)
         self.start_password = Label(self,bg = "black", fg="lawn green",font=("Courier New", 70), text="")
         self.start_password.pack()
-        begin = tkinter.Button(self,text="BEGIN",command = self.setupBoot)
-        begin.pack()
+        if(SHOW_BUTTONS):
+            begin = tkinter.Button(self,text="BEGIN",command = self.setupBoot)
+            begin.pack()
         self.pack(fill=BOTH, expand=True)
     # sets up the LCD "boot" GUI
     def setupBoot(self):
@@ -100,7 +102,7 @@ class Lcd(Frame):
 
     # sets up the LCD GUI
     def setup(self):
-        print("Nigga")
+        
         # the timer
         self._ltimer = Label(self, bg="black", fg="#00ff00", font=("Courier New", 18), text="Time left: ")
         self._ltimer.grid(row=1, column=0, columnspan=3, sticky=W)
@@ -129,7 +131,7 @@ class Lcd(Frame):
             self._bquit.grid(row=6, column=2, pady=40)
         self.phase = 2
     def obamaDisplay(self):
-        self.erase()
+        self._lscroll.destroy()
         self.phase = 3
         self.columnconfigure(0, weight=1)
         self.columnconfigure(1, weight=1)
@@ -137,16 +139,31 @@ class Lcd(Frame):
         self.img = PhotoImage(file="Obama.png")
         self.img = self.img.subsample(3,3)
         self.image = Label(self,bg="black", image=self.img)
-        self.image.grid(row=0,column=0,rowspan=5)
+        self.image.grid(row=0,column=0,rowspan=2)
         self.spass = Label(self, bg="black", fg="white",font=("Courier New", 20),text = "Secret Password:")
         self.spass.grid(row=0,column=1)
-        self.r = tkinter.Button(self, bg="red", fg="white",font=("Courier New", 20),text = "Riddle", command = self.riddle)
-        self.r.grid(row=1,column=2)
-    def riddle(self):
+        # the timer
+        self._ltimer.grid(row=3, column=0, sticky=W)
+        # the keypad passphrase
+        self._lkeypad.grid(row=4, column=0, sticky=W)
+        # the jumper wires status
+        self._lwires.grid(row=3, column=2,  sticky=W)
+        # the pushbutton status
+        self._lbutton.grid(row=4, column=2, sticky=W)
+        # the toggle switches status
+        self._ltoggles.grid(row=5, column=0, sticky=W)
+        if (SHOW_BUTTONS):
+            # the pause button (pauses the timer)
+            self._bpause = tkinter.Button(self, bg="red", fg="white", font=("Courier New", 18), text="Pause", anchor=CENTER, command=self.pause)
+            self._bpause.grid(row=6, column=0, pady=40)
+            # the quit button
+            self._bquit = tkinter.Button(self, bg="red", fg="white", font=("Courier New", 18), text="Quit", anchor=CENTER, command=self.quit)
+            self._bquit.grid(row=6, column=2, pady=40)
+    def riddleprint(self):
         self.riddle = "what riddle will be here?"
         color = ["red","white","blue"]
         self.box = Label(self,bg=rng.choice(color), fg="black",font=("Courier New", 20),text = self.riddle)
-        self.box.grid(row=3, column= 1, rowspan = 5, columnspan=2)
+        self.box.grid(row=1, column= 1, columnspan=2)
 
     # lets us pause/unpause the timer (7-segment display)
     def setTimer(self, timer):
@@ -166,6 +183,7 @@ class Lcd(Frame):
         while (not exploding and pygame.mixer.music.get_busy()):
             sleep(0.1)
         # destroy/clear widgets that are no longer needed
+        self.erase()
         '''
         self._lscroll["text"] = ""
         self._ltimer.destroy()
@@ -178,16 +196,16 @@ class Lcd(Frame):
             self._bpause.destroy()
             self._bquit.destroy()
         '''
-        self.erase()
+        
         # reconfigure the GUI
         # the appropriate (success/explode) image
         if (success):
-            image = PhotoImage(file=SUCCESS[0])
+            self.img = PhotoImage(file=SUCCESS[0])
+
         else:
-            image = PhotoImage(file=EXPLODE[0])
-        self._lscroll["image"] = image
-        self._lscroll.image = image
-        self._lscroll.grid(row=0, column=0, columnspan=3, sticky=EW)
+            self.img = PhotoImage(file=EXPLODE[0])
+        self.image = Label(self,bg="black", image=self.img)
+        self.image.grid(row=0, column=0, columnspan=3, sticky=EW)
         # the retry button
         self._bretry = tkinter.Button(self, bg="red", fg="white", font=("Courier New", 18), text="Retry", anchor=CENTER, command=self.retry)
         self._bretry.grid(row=1, column=0, pady=40)
@@ -317,9 +335,8 @@ class Timer(PhaseThread):
         while (self._running):
             if (not self._paused):
                 #change button color
-                if self._value % 2 and gui.phase > 1:
+                if self._value % 2 and gui.phase > 2:
                     c = ["R","B","G"]
-                    print(button.color)
                     button.color = c[count]
                     count +=1
                     if count == 3:
@@ -361,6 +378,7 @@ class Keypad(PhaseThread):
 
     # runs the thread
     def run(self):
+        crack = False
         self._running = True
         while (self._running):
             # process keys when keypad key(s) are pressed
@@ -376,20 +394,23 @@ class Keypad(PhaseThread):
                 # log the key
                 self._value += str(key)
                 if gui.phase == 1:
-                    target = "62262"
-                    if key == "#":
+                    ipass = "62262"
+                    if key == "#" and crack == False:
                         gui.start_password.configure(text = f"{self._value}")
-                        if (self._value == f"{target}#"):
+                        if (self._value == f"{ipass}#"):
                             gui.setupBoot()
+                            crack = True
                         self._value = ""        
                     gui.start_password.configure(text = f"{self._value}")
-                if gui.phase == 2:
+                if gui.phase == 2 or gui.phase == 3:
                     # the combination is correct -> phase defused
-                    if (self._value == self._target):
-                        self._defused = True
-                    # the combination is incorrect -> phase failed (strike)
-                    elif (self._value != self._target[0:len(self._value)]):
-                        self._failed = True
+                    if key == "#":
+                        if (self._value == self._target):
+                            self._defused = True
+                        # the combination is incorrect -> phase failed (strike)
+                        elif (self._value != self._target):
+                            self._failed = True
+                        self._value = ""
                 
             sleep(0.1)
 
@@ -413,18 +434,16 @@ class Wires(NumericPhase):
             # the component value is correct -> phase defused
             if gui.phase == 2:
                 if (self._value == self._target):
+                    self._defused = True
                     gui.obamaDisplay()
-            '''
-            if (self._value == self._target):
-                self._defused = True
-            # the component state has changed
-            elif (self._value != self._prev_value):
-                # one or more component states are incorrect -> phase failed (strike)
-                if (not self._check_state()):
-                    self._failed = True
-                # note the updated state
-                self._prev_value = self._value
-                '''
+                # the component state has changed
+                elif (self._value != self._prev_value):
+                    # one or more component states are incorrect -> phase failed (strike)
+                    if (not self._check_state()):
+                        self._failed = True
+                    # note the updated state
+                    self._prev_value = self._value
+                
             sleep(0.1)
     # returns the jumper wires state as a string
     def __str__(self):
@@ -455,6 +474,7 @@ class Button(PhaseThread):
         self._color = n
     # runs the thread
     def run(self):
+        seen = False
         self._running = True
         start = 0
         end = 0 
@@ -470,6 +490,10 @@ class Button(PhaseThread):
             self._rgb[2].value = False if self.color == "B" else True
             # get the pushbutton's state
             self._value = self._component.value
+            if end-start >= 1:
+                seen = True
+                gui.riddleprint()
+                start = end
             # it is pressed
             if (self._value):
                 if self._pressed == False:
@@ -481,18 +505,18 @@ class Button(PhaseThread):
                 # was it previously pressed?
                 if (self._pressed):
                     end = time.time()
-                    start = end
                     # check the release parameters
                     # for R, nothing else is needed
                     # for G or B, a specific digit must be in the timer (sec) when released
                     if (not self._target or self._target in self._timer._sec) and self.color == 'B':
                         p = p + q.dequeue()
                         gui.spass.configure(text = f"Secret Password:\n {p}")
-                    '''    
-                        self._defused = True
-                    else:
-                        self._failed = True
-                    '''
+                        if p == password and seen == True:
+                            self._defused = True
+                    if not self._target and self.color == 'R':
+                        self._failed= True
+ 
+
                     # note that the pushbutton was released
                     self._pressed = False
             sleep(0.1)
@@ -523,7 +547,7 @@ def bootup(n=0):
         if (not ANIMATE):
             gui._lscroll["text"] = boot_text.replace("\x00", "")
         # configure the remaining GUI widgets
-        print("fuck")
+        
         gui.setup()
         # setup the phase threads, execute them, and check their statuses
     # if we're animating
@@ -578,7 +602,7 @@ def check_phases():
     if (not exploding and not pygame.mixer.music.get_busy()):
         pygame.mixer.music.load(TICK)
         pygame.mixer.music.play(-1)
-    if gui.phase == 2:   
+    if gui.phase == 2 or gui.phase ==3:   
         # check the timer
         if (timer._running):
             # update the GUI
