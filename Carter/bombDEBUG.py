@@ -118,6 +118,7 @@ class Lcd(Frame):
         # the strikes left
         self._lstrikes = Label(self, bg="black", fg="#00ff00", font=("Courier New", 18), text="Strikes left: ")
         self._lstrikes.grid(row=5, column=2, sticky=W)
+        
         if (SHOW_BUTTONS):
             # the pause button (pauses the timer)
             self._bpause = tkinter.Button(self, bg="red", fg="white", font=("Courier New", 18), text="Pause", anchor=CENTER, command=self.pause)
@@ -461,8 +462,6 @@ def bootup(n=0):
         # configure the remaining GUI widgets
         gui.setup()
         # setup the phase threads, execute them, and check their statuses
-        if (RPi):
-            gui.after(1000, setup_phases)
     # if we're animating
     else:
         # add the next character (but don't render \x00 since it specifies a longer pause)
@@ -480,6 +479,7 @@ def setup_phases():
     timer = Timer(component_7seg, COUNTDOWN)
     # bind the 7-segment display to the LCD GUI so that it can be paused/unpaused from the GUI
     gui.setTimer(timer)
+    
     # setup the keypad thread
     keypad = Keypad(component_keypad, keypad_target)
     # setup the jumper wires thread
@@ -508,7 +508,8 @@ def setup_phases():
 # checks the phase threads
 def check_phases():
     global active_phases, exploding
-
+   
+        
     # restart the tick audio if needed
     if (not exploding and not pygame.mixer.music.get_busy()):
         pygame.mixer.music.load(TICK)
