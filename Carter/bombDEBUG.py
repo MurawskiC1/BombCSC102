@@ -6,21 +6,41 @@
 
 # import the configs
 from bomb_configs import *
-# import the phases
 
+
+###########
+# Bomb Phases 
+###########
 from tkinter import *
 import tkinter
 from threading import Thread
 import pygame
 from time import sleep
-import time
-import random as rng
 import os
 import sys
+import random as rng
+import time
 
-###########
-#BOMB PHASES 
-###########
+#########
+# classes
+#########
+#########
+# cQUEUE
+class Queue:
+    def __init__(self):
+        self._data = []
+    
+    def enqueue(self, d):
+        self._data.append(d)
+        
+    def dequeue(self):
+        if len(self._data) > 0:
+            temp = self._data[0]
+            del self._data[0]
+            return temp
+        else:
+            print('error')
+            
 # the LCD display GUI
 class Lcd(Frame):
     def __init__(self, window):
@@ -33,15 +53,12 @@ class Lcd(Frame):
         self._button = None
         # setup the initial "boot" GUI
         self.welcome()
-        self.phase = 0
-        
-    
     def erase(self):
         for widget in self.winfo_children():
             widget.destroy()
-    
     def welcome(self):
         self.erase()
+        self.phase = 0
         welcome = Label(self,bg = "black", fg = "red" ,font=("Courier New", 30),text="Welcome to")
         welcome.grid(row = 0,column = 1)
         title = Label(self,bg = "black", fg = "white" ,font=("Courier New", 70),text="OBOMBA")
@@ -54,25 +71,23 @@ class Lcd(Frame):
         self.image1.grid(row = 1, column = 0, rowspan=2)
         self.image2 = Label(self,bg="black", image=self.img)
         self.image2.grid(row = 1, column = 2, rowspan=2)
-        self.pack(fill=BOTH, expand=True)
-    
+        self.pack(fill=BOTH, expand=True) 
+        
     def password(self):
         self.phase=1
         self.erase()
         label = Label(self,bg = "black", fg = "white" ,font=("Courier New", 20), text='Password:')
         label.pack()
-        
-        label.after(1000, setup_phases)
+        label.after(500, setup_phases)
         self.start_password = Label(self,bg = "black", fg="lawn green",font=("Courier New", 70), text="")
         self.start_password.pack()
         begin = tkinter.Button(self,text="BEGIN",command = self.setupBoot)
         begin.pack()
         self.pack(fill=BOTH, expand=True)
-    
     # sets up the LCD "boot" GUI
     def setupBoot(self):
         self.erase()
-        self.phases = 2
+        self.phase = 2
         # set column weights
         self.columnconfigure(0, weight=1)
         self.columnconfigure(1, weight=2)
@@ -82,11 +97,9 @@ class Lcd(Frame):
         self._lscroll.grid(row=0, column=0, columnspan=3, sticky=W)
         self.pack(fill=BOTH, expand=True)
         bootup()
-        
 
     # sets up the LCD GUI
     def setup(self):
-        
         # the timer
         self._ltimer = Label(self, bg="black", fg="#00ff00", font=("Courier New", 18), text="Time left: ")
         self._ltimer.grid(row=1, column=0, columnspan=3, sticky=W)
@@ -105,14 +118,10 @@ class Lcd(Frame):
         # the strikes left
         self._lstrikes = Label(self, bg="black", fg="#00ff00", font=("Courier New", 18), text="Strikes left: ")
         self._lstrikes.grid(row=5, column=2, sticky=W)
-        
         if (SHOW_BUTTONS):
             # the pause button (pauses the timer)
             self._bpause = tkinter.Button(self, bg="red", fg="white", font=("Courier New", 18), text="Pause", anchor=CENTER, command=self.pause)
             self._bpause.grid(row=6, column=0, pady=40)
-            
-            self.wire = tkinter.Button(self, bg="red", fg="white", font=("Courier New", 18), text="Wire", anchor=CENTER, command=self.obamaDisplay)
-            self.wire.grid(row=6, column=1, pady=40)
             # the quit button
             self._bquit = tkinter.Button(self, bg="red", fg="white", font=("Courier New", 18), text="Quit", anchor=CENTER, command=self.quit)
             self._bquit.grid(row=6, column=2, pady=40)
@@ -131,15 +140,12 @@ class Lcd(Frame):
         self.spass.grid(row=0,column=1)
         self.r = tkinter.Button(self, bg="red", fg="white",font=("Courier New", 20),text = "Riddle", command = self.riddle)
         self.r.grid(row=1,column=2)
-        
     def riddle(self):
         self.riddle = "what riddle will be here?"
         color = ["red","white","blue"]
         self.box = Label(self,bg=rng.choice(color), fg="black",font=("Courier New", 20),text = self.riddle)
         self.box.grid(row=3, column= 1, rowspan = 5, columnspan=2)
-        
 
-        
     # lets us pause/unpause the timer (7-segment display)
     def setTimer(self, timer):
         self._timer = timer
@@ -168,7 +174,6 @@ class Lcd(Frame):
         if (SHOW_BUTTONS):
             self._bpause.destroy()
             self._bquit.destroy()
-        self.erase()
 
         # reconfigure the GUI
         # the appropriate (success/explode) image
@@ -304,18 +309,8 @@ class Timer(PhaseThread):
     # runs the thread
     def run(self):
         self._running = True
-        count = 0 
         while (self._running):
-
             if (not self._paused):
-                if self._value % 2:
-                    c = ["R","B","G"]
-                    
-                    button.color = c[count]
-                    count +=1
-                    if count == 3:
-                        count = 0
-                
                 # update the timer and display its value on the 7-segment display
                 self._update()
                 self._component.print(str(self))
@@ -354,7 +349,6 @@ class Keypad(PhaseThread):
     # runs the thread
     def run(self):
         self._running = True
-        
         while (self._running):
             # process keys when keypad key(s) are pressed
             if (self._component.pressed_keys):
@@ -368,28 +362,13 @@ class Keypad(PhaseThread):
                     sleep(0.1)
                 # log the key
                 self._value += str(key)
-                
                 # the combination is correct -> phase defused
-                if gui.phase == 1 :
-                    target = "62262"
-                    if key == "#":
-                        gui.start_password.configure(text = f"{self._value}")
-                        if (self._value == "62262#"):
-                            gui.setupBoot()
-                            cracked = True
-                            self._value == ""
-                        self._value = ""
-                        
-                    else:
-                        gui.start_password.configure(text = f"{self._value}")
-                    
-                        '''
-                    # the combination is incorrect -> phase failed (strike)
-                    elif (self._value != target[0:len(self._value)]):
-                        self._failed = True
-                        '''
-                    sleep(0.1)
-                    
+                if (self._value == self._target):
+                    self._defused = True
+                # the combination is incorrect -> phase failed (strike)
+                elif (self._value != self._target[0:len(self._value)]):
+                    self._failed = True
+            sleep(0.1)
 
     # returns the keypad combination as a string
     def __str__(self):
@@ -402,24 +381,7 @@ class Keypad(PhaseThread):
 class Wires(NumericPhase):
     def __init__(self, component, target, display_length, name="Wires"):
         super().__init__(name, component, target, display_length)
-    
-    def run(self):
-        self._running = True
-        while (self._running):
-            # get the component value
-            self._value = self._get_int_state()
-            # the component value is correct -> phase defused
-            if gui.phase == 2:
-                if (self._value == self._target):
-                    gui.obamaDisplay()
-            # the component state has changed
-            if (self._value != self._prev_value):
-                # one or more component states are incorrect -> phase failed (strike)
-                if (not self._check_state()):
-                    self._failed = True
-                # note the updated state
-                self._prev_value = self._value
-            sleep(0.1)
+
     # returns the jumper wires state as a string
     def __str__(self):
         if (self._defused):
@@ -438,62 +400,37 @@ class Button(PhaseThread):
         # we need the pushbutton's RGB pins to set its color
         self._rgb = component_rgb
         # the pushbutton's randomly selected LED color
-        self.color = color
-        
+        self._color = color
         # we need to know about the timer (7-segment display) to be able to determine correct pushbutton releases in some cases
         self._timer = timer
-    @property
-    def color(self):
-        return self._color
-    @color.setter
-    def color(self, c):
-        self._color = c
-    
+
     # runs the thread
     def run(self):
-        start = 0
-        end = 0 
         self._running = True
-        p = ''
-        password = 'michelleobama'
-        q = Queue()
-        for i in password:
-            q.enqueue(i)
         # set the RGB LED color
-        
+        self._rgb[0].value = False if self._color == "R" else True
+        self._rgb[1].value = False if self._color == "G" else True
+        self._rgb[2].value = False if self._color == "B" else True
         while (self._running):
-            self._rgb[0].value = False if self.color == "R" else True
-            self._rgb[1].value = False if self.color == "G" else True
-            self._rgb[2].value = False if self.color == "B" else True
             # get the pushbutton's state
             self._value = self._component.value
             # it is pressed
-            if gui.phase == 3:
-                if end-start >= 2:
-                    gui.riddle()
-                    start =0
-                    end = 0
             if (self._value):
-                if self._pressed == False:
-                    start = time.time()
+                # note it
                 self._pressed = True
-            
             # it is released
             else:
                 # was it previously pressed?
                 if (self._pressed):
-                    end = time.time()
                     # check the release parameters
                     # for R, nothing else is needed
                     # for G or B, a specific digit must be in the timer (sec) when released
-                    if (not self._target or self._target in self._timer._sec) and self.color == 'B':
-                        p = p + q.dequeue()
-                        gui.spass.configure(text = f"Secret Password:\n {p}")
+                    if (not self._target or self._target in self._timer._sec):
+                        self._defused = True
                     else:
                         self._failed = True
                     # note that the pushbutton was released
                     self._pressed = False
-                    
             sleep(0.1)
 
     # returns the pushbutton's state as a string
@@ -507,22 +444,10 @@ class Button(PhaseThread):
 class Toggles(NumericPhase):
     def __init__(self, component, target, display_length, name="Toggles"):
         super().__init__(name, component, target, display_length)
-# classes
-###########
-class Queue:
-    def __init__(self):
-        self._data = []
-    
-    def enqueue(self, d):
-        self._data.append(d)
-        
-    def dequeue(self):
-        if len(self._data) > 0:
-            temp = self._data[0]
-            del self._data[0]
-            return temp
-        else:
-            print('error')
+
+
+
+
 ###########
 # functions
 ###########
@@ -753,3 +678,4 @@ gui.after(1000, bootup)
 
 # display the LCD GUI
 window.mainloop()
+

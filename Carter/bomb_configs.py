@@ -6,7 +6,7 @@
 
 # constants
 DEBUG = True        # debug mode?
-RPi = True           # is this running on the RPi?
+RPi = False          # is this running on the RPi?
 ANIMATE = False       # animate the LCD text?
 SHOW_BUTTONS = True # show the Pause and Quit buttons on the main LCD GUI?
 COUNTDOWN = 60      # the initial bomb countdown value (seconds)
@@ -211,6 +211,7 @@ button_target = None
 # G is the first numeric digit in the serial number
 
 wires_target=15
+
 if (DEBUG):
     print(f"Serial number: {serial}")
     print(f"Toggles target: {bin(toggles_target)[2:].zfill(4)}/{toggles_target}")
