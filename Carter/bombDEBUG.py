@@ -395,16 +395,10 @@ class Keypad(PhaseThread):
                 self._value += str(key)
                 if gui.phase == 1:
                     ipass = "62262"
-<<<<<<< HEAD
                     gui.start_password.configure(text = f"{self._value}")
                     if key == "#":
                         gui.start_password.configure(text = "")
                         if crack == False:
-=======
-                    if crack == False:
-                        gui.start_password.configure(text = f"{self._value}")
-                        if key == "#":
->>>>>>> f205c4d301ff5083b183262dcad2b7791ec24283
                             if (self._value == f"{ipass}#"):
                                 gui.setupBoot()
                                 crack = True
