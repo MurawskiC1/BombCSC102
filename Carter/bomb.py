@@ -381,8 +381,10 @@ class Keypad(PhaseThread):
                     sleep(0.1)
                 # log the key
                 self._value += str(key)
+                
                 # the combination is correct -> phase defused
                 if gui.phase==1:
+                    gui.start_password.configure(text = f"key")
                     if (self._value == self._target):
                         gui.setupBoot()
                         self._value == ""
@@ -412,10 +414,11 @@ class Wires(NumericPhase):
             # get the component value
             self._value = self._get_int_state()
             # the component value is correct -> phase defused
-            if (self._value == self._target):
-                gui.obamaDisplay()
+            if gui.phase == 2:
+                if (self._value == self._target):
+                    gui.obamaDisplay()
             # the component state has changed
-            elif (self._value != self._prev_value):
+            if (self._value != self._prev_value):
                 # one or more component states are incorrect -> phase failed (strike)
                 if (not self._check_state()):
                     self._failed = True
