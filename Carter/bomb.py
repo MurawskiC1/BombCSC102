@@ -89,6 +89,7 @@ class Lcd(Frame):
     # sets up the LCD "boot" GUI
     def setupBoot(self):
         self.erase()
+        self.phase=2
         # set column weights
         self.columnconfigure(0, weight=1)
         self.columnconfigure(1, weight=2)
@@ -102,7 +103,7 @@ class Lcd(Frame):
 
     # sets up the LCD GUI
     def setup(self):
-        self.phase=2
+        
         # the timer
         self._ltimer = Label(self, bg="black", fg="#00ff00", font=("Courier New", 18), text="Time left: ")
         self._ltimer.grid(row=1, column=0, columnspan=3, sticky=W)
@@ -140,18 +141,20 @@ class Lcd(Frame):
         self.columnconfigure(1, weight=1)
         self.columnconfigure(2, weight=2)
         self.img = PhotoImage(file="Obama.png")
+        self.img = self.img.subsample(3,3)
         self.image = Label(self,bg="black", image=self.img)
         self.image.grid(row=0,column=0,rowspan=5)
         self.spass = Label(self, bg="black", fg="white",font=("Courier New", 20),text = "Secret Password:")
         self.spass.grid(row=0,column=1)
         self.r = tkinter.Button(self, bg="red", fg="white",font=("Courier New", 20),text = "Riddle", command = self.riddle)
-        self.r.grid(row=1,column=3)
+        self.r.grid(row=1,column=2)
         
     def riddle(self):
         self.riddle = "what riddle will be here?"
         color = ["red","white","blue"]
-        self.box = Label(self,bg=rng.choice(color), fg="black",font=("Courier New", 50),text = self.riddle)
+        self.box = Label(self,bg=rng.choice(color), fg="black",font=("Courier New", 20),text = self.riddle)
         self.box.grid(row=3, column= 1, rowspan = 5, columnspan=2)
+        
 
         
     # lets us pause/unpause the timer (7-segment display)
@@ -383,9 +386,9 @@ class Keypad(PhaseThread):
                 self._value += str(key)
                 
                 # the combination is correct -> phase defused
-                if gui.phase==1:
-                    gui.start_password.configure(text = f"key")
-                    if (self._value == self._target):
+                if gui.phase == 1:
+                    gui.start_password.configure(text = f"{self._value}")
+                    if (self._value == "62262"):
                         gui.setupBoot()
                         self._value == ""
                     # the combination is incorrect -> phase failed (strike)
@@ -473,11 +476,11 @@ class Button(PhaseThread):
             # get the pushbutton's state
             self._value = self._component.value
             # it is pressed
-            if end-start >= 2:
-                if gui.phase == 3:
+            if gui.phase == 3:
+                if end-start >= 2:
                     gui.riddle()
-                start =0
-                end = 0
+                    start =0
+                    end = 0
             if (self._value):
                 if self._pressed == False:
                     start = time.time()
@@ -493,7 +496,7 @@ class Button(PhaseThread):
                     # for G or B, a specific digit must be in the timer (sec) when released
                     if (not self._target or self._target in self._timer._sec) and self.color == 'B':
                         p = p + q.dequeue()
-                        gui.spass.configure(text = f"Secret Password: {p}")
+                        gui.spass.configure(text = f"Secret Password:\n {p}")
                     else:
                         self._failed = True
                     # note that the pushbutton was released
@@ -580,14 +583,15 @@ def check_phases():
     # check the timer
     if (timer._running):
         # update the GUI
-        gui._ltimer["text"] = f"Time left: {timer}"
-        # play the exploding audio at t-10s
-        if (not exploding and timer._interval * timer._value <= 11.25):
-            exploding = True
-            component_7seg.blink_rate = 1
-            pygame.mixer.music.load(EXPLODING)
-            pygame.mixer.music.play(1)
-        if (timer._value == 60):
+        if gui.phase == 2:
+            # play the exploding audio at t-10s
+            if (not exploding and timer._interval * timer._value <= 11.25):
+                exploding = True
+                component_7seg.blink_rate = 1
+                pygame.mixer.music.load(EXPLODING)
+                pygame.mixer.music.play(1)
+            
+            gui._ltimer["text"] = f"Time left: {timer}"
             gui._ltimer["fg"] = "#ff0000"
     else:
         # the countdown has expired -> explode!
@@ -599,78 +603,83 @@ def check_phases():
     # check the keypad
     if (keypad._running):
         # update the GUI
-        gui.start_password.configure(text = f"{keypad}")
-        gui._lkeypad["text"] = f"Combination: {keypad}"
-        # the phase is defused -> stop the thread
-        if (keypad._defused):
-            keypad._running = False
-            gui._lkeypad["fg"] = "#00ff00"
-            defused()
-        # the phase has failed -> strike
-        elif (keypad._failed):
-            strike()
-            # reset the keypad
-            keypad._failed = False
-            keypad._value = ""
+        if gui.phase == 2:
+            gui.start_password.configure(text = f"{keypad}")
+            gui._lkeypad["text"] = f"Combination: {keypad}"
+            # the phase is defused -> stop the thread
+            if (keypad._defused):
+                keypad._running = False
+                gui._lkeypad["fg"] = "#00ff00"
+                defused()
+            # the phase has failed -> strike
+            elif (keypad._failed):
+                strike()
+                # reset the keypad
+                keypad._failed = False
+                keypad._value = ""
     # check the wires
     if (wires._running):
         # update the GUI
-        gui._lwires["text"] = f"Wires: {wires}"
-        # the phase is defused -> stop the thread
-        if (wires._defused):
-            wires._running = False
-            gui._lwires["fg"] = "#00ff00"
-            defused()
-        # the phase has failed -> strike
-        elif (wires._failed):
-            strike()
-            # reset the wires
-            wires._failed = False
+        if gui.phase == 2:
+            gui._lwires["text"] = f"Wires: {wires}"
+            # the phase is defused -> stop the thread
+            if (wires._defused):
+                wires._running = False
+                gui._lwires["fg"] = "#00ff00"
+                defused()
+            # the phase has failed -> strike
+            elif (wires._failed):
+                strike()
+                # reset the wires
+                wires._failed = False
     # check the button
     if (button._running):
-        # update the GUI
-        gui._lbutton["text"] = f"Button: {button}"
-        # the phase is defused -> stop the thread
-        if (button._defused):
-            button._running = False
-            gui._lbutton["fg"] = "#00ff00"
-            defused()
-        # the phase has failed -> strike
-        elif (button._failed):
-            strike()
-            # reset the button
-            button._failed = False
+        if gui.phase == 2:
+            # update the GUI
+            gui._lbutton["text"] = f"Button: {button}"
+            # the phase is defused -> stop the thread
+            if (button._defused):
+                button._running = False
+                gui._lbutton["fg"] = "#00ff00"
+                defused()
+            # the phase has failed -> strike
+            elif (button._failed):
+                strike()
+                # reset the button
+                button._failed = False
     # check the toggles
     if (toggles._running):
-        # update the GUI
-        gui._ltoggles["text"] = f"Toggles: {toggles}"
-        # the phase is defused -> stop the thread
-        if (toggles._defused):
-            toggles._running = False
-            gui._ltoggles["fg"] = "#00ff00"
-            defused()
-        # the phase has failed -> strike
-        elif (toggles._failed):
-            strike()
-            # reset the toggles
-            toggles._failed = False
+        if gui.phase == 2:
+            # update the GUI
+            gui._ltoggles["text"] = f"Toggles: {toggles}"
+            # the phase is defused -> stop the thread
+            if (toggles._defused):
+                toggles._running = False
+                gui._ltoggles["fg"] = "#00ff00"
+                defused()
+            # the phase has failed -> strike
+            elif (toggles._failed):
+                strike()
+                # reset the toggles
+                toggles._failed = False
 
     # note the strikes on the GUI
-    gui._lstrikes["text"] = f"Strikes left: {strikes_left}"
-    # too many strikes -> explode!
-    if (strikes_left == 0):
-        # turn off the bomb and render the conclusion GUI
-        turn_off()
-        gui.after(1000, gui.conclusion, exploding, False)
-        # stop checking phases
-        return
-    # a few strikes left -> timer goes twice as fast!
-    elif (strikes_left == 2 and not exploding):
-        timer._interval = 0.5
-        gui._lstrikes["fg"] = "#ff0000"
-    # one strike left -> timer goes even faster!
-    elif (strikes_left == 1 and not exploding):
-        timer._interval = 0.25
+    if gui.phase == 2:
+        gui._lstrikes["text"] = f"Strikes left: {strikes_left}"
+        # too many strikes -> explode!
+        if (strikes_left == 0):
+            # turn off the bomb and render the conclusion GUI
+            turn_off()
+            gui.after(1000, gui.conclusion, exploding, False)
+            # stop checking phases
+            return
+        # a few strikes left -> timer goes twice as fast!
+        elif (strikes_left == 2 and not exploding):
+            timer._interval = 0.5
+            gui._lstrikes["fg"] = "#ff0000"
+        # one strike left -> timer goes even faster!
+        elif (strikes_left == 1 and not exploding):
+            timer._interval = 0.25
 
     # the bomb has been successfully defused!
     if (active_phases == 0):
