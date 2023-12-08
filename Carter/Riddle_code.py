@@ -38,7 +38,7 @@ def main():
     q6 = Question(" What is the capital of Russia?", [ "St.Petersburg","Berlin","Kursk"], " Moscow")
     q7 = Question(" How many offical sports teams does University of Tampa have?", ["17", "26", "13"], "20")
     q8 = Question(" University of Tampa as of now has what percentage acceptance rate ?", ["48%", "56%", "58%"], "54%")
-    q9 = Question( " Which of these presidents was seventh US president?", [" Theodore Roosevelt", " Abraham Lincoln", " Henry Ford"], "Andrew Jackson")
+    q9 = Question( " Which of these presidents was seventh US president?", [" Theodore Roosevelt", " Andrew Jackson ", "Abraham Lincoln", " Henry Ford"], "Andrew Jackson")
     q10 = Question(" If I gave you the binary represensation of 00101001 what is the value ?", [ " 36", "56", "48"], "41")
  
 
