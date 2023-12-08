@@ -150,7 +150,7 @@ class Lcd(Frame):
         self.r.grid(row=1,column=2)
         
     def riddle(self):
-        self.riddle = [q1, q2,q3,q4,q5,q6,q7,q8,q9,q10]
+        self.riddle = 
         q1 = Question("What is the capital of France?", ["Berlin", "Paris", "London", "Madrid"], "Paris")
         q2 = Question("Which planet is the fourth going from the sun?", ["Mars", "Earth", "Venus", "Jupiter"], "Mars")
         q3 = Question("What is the largest mammal?", ["Elephant", "Blue Whale ", "Giraffe", "Hippopotamus"], "Blue Whale")
@@ -162,22 +162,26 @@ class Lcd(Frame):
         q9 = Question( " Which of these presidents was seventh US president?", [" Theodore Roosevelt", " Andrew Jackson ", "Abraham Lincoln", " Henry Ford"], "Andrew Jackson")
         q10 = Question(" If I gave you the binary represensation of 00101001 what is the value ?", [ " 36", "56", "48"], "41")
 
+        riddles =["Question",[q1,q2,q3,q4,q5,q6,q7,q8,q9,q10],"answer"]
         
-        
-        FRA= []
+        fra = []
         temp = toggles
        
         if (temp - 8)!=0:
-            FRA.append(random.choice(q1,q7,q3))
+            rc_1 = choice([q1,q2,q3])
+            fra.append(rc_1)
             temp -= 8
         if (temp -4)!=0:
-            FRA.append(random.choice(q2,q4))
+            rc_2 = choice([q4,q5])
+            fra.append(rc_2)
             temp -= 4
         if (temp - 2) != 0:
-            FRA.append(random.choice(q6,q7))
+             rc_3 = choice([q6,q7])
+             fra.append(rc_3)
             temp -= 2 
         if (temp -1) !=0:
-            FRA.appeand(random.choice(q8, q9,))
+            rc_4 = choice([q9,q8,q10])
+            fra.append(rc_4)
         
          
         

@@ -229,13 +229,17 @@ q2 = Question("Which planet is the fourth going from the sun?", ["Mars", "Earth"
 q3 = Question("What is the largest mammal?", ["Blue Whale", "Elephant ", "Giraffe", "Hippopotamus"], "Blue Whale")
 q4 = Question("Which one of these presidents wasn't shot in office?", ["Lincoln", "Adams", "Roosevelt", "Garfield"], "Adams")
 q5 = Question("Choose one of the following doors, only one can you survive", [" A bear that just ate cocaine", "A tiger that hasn't eaten in five weeks"," A velociraptor that hasn't eaten in a day", "Bane",], "A tiger that hasn't eaten in five weeks")
-q6 = Question(" What is the capital of Russia?", [ "St.Petersburg","Berlin","Moscow","Kursk"], " Moscow")
-q7 = Question(" How many offical sports teams does University of Tampa have?", ["17", "26", "20", "13"], "20")
+q6 = Question(" What is the capital of Russia?", [ "St.Petersburg","Moscow","Leningrad","Kursk"], " Moscow")
+q7 = Question(" How many offical sports teams does University of Tampa have?", ["20", "26", "17", "13"], "20")
 q8 = Question(" University of Tampa as of now has what percentage acceptance rate ?", ["48%",  "56%", "58%","54%"], "54%")
 q9 = Question( " Which of these presidents was seventh US president?", [" Theodore Roosevelt",   "Abraham Lincoln", " Henry Ford","Andrew Jackson"], "Andrew Jackson")
 q10 = Question(" If I gave you the binary represensation of 00101001 what is the value ?", [ " 36", "56", "48","41"], "41")
-
-riddles =["Question",[q1,q2,q3,q4,q5,q6,q7,q8,q9,q10],"answer"]
+q11 = Question(" What is the graduation rate of UT?", [" 67%", " 57%", " 50% ", "51%"], " 57%")
+q12 = Question(" Which president inacted a The Healthy, Hunger Free Kids act?", [ "Truman", " Theodore Roosevelt", " Jimmy Carter", " Barack Obama"], "Barack Obama")
+q13 = Question(" Which one of these is an actual fish?", [ "Flying Fish ", "Cuttle Fish", "Cray Fish", " Jelly Fish"], " Flying Fish")
+q14 = Question (" How many students are currently enrolled in UT ?", [" 11,000", "10,500", "10,200","10,800"], "10,500")
+q15 = Question (" When was the United States founded ?", [" 1607", "1865", " 1803", "1776"], "1776")
+riddles =["Question",[q1,q2,q3,q4,q5,q6,q7,q8,q9,q10,q11,q12,q13,q14,q15],"answer"]
 
 fra = []
 toggles_target = choice([1,4,8,5,9,13,12])
@@ -243,22 +247,17 @@ temp = toggles_target
 qcount = 0
 
 if (temp - 8)>=0:
-    rc_1 = choice([q1,q2,q3])
+    rc_1 = choice([q1,q2,q3,q13,q7])
     fra.append(rc_1)
     temp -= 8
     qcount += 1
 if (temp -4)>=0:
-    rc_2 = choice([q4,q5])
+    rc_2 = choice([q4,q5,q11,q14,q6])
     fra.append(rc_2)
     temp -= 4
     qcount += 1
-if (temp - 2) >= 0:
-    rc_3 = choice([q6,q7])
-    fra.append(rc_3)
-    temp -= 2
-    qcount += 1
 if (temp -1) >=0:
-    rc_4 = choice([q9,q8,q10])
+    rc_4 = choice([q9,q8,q10,q12,q15])
     fra.append(rc_4)
     qcount += 1
 
@@ -286,7 +285,7 @@ g5 = ["872",1,0,"10072001","10/07/2001"]
 
 
 pword = choice([g1,g2,g3,g4,g5])
-pword = g2
+
 keypadI =pword[0] 
 wireI=pword[1]
 wires_target=pword[2]

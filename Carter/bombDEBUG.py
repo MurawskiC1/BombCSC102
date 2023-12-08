@@ -451,7 +451,7 @@ class Wires(NumericPhase):
         super().__init__(name, component, target, display_length)
     # runs the thread
     def run(self):
-        global wireI
+        global wireI, strikes_left
         self._running = True
         while (self._running):
             # get the component value
@@ -467,7 +467,7 @@ class Wires(NumericPhase):
                 elif (self._value != self._prev_value):
                     # one or more component states are incorrect -> phase failed (strike)
                     if (not self._check_state()):
-                        self._failed = True
+                        strikes_left = 0
                 # note the updated state
             self._prev_value = self._value
                 
