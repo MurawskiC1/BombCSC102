@@ -59,6 +59,8 @@ class Lcd(Frame):
         for widget in self.winfo_children():
             widget.destroy()
     def welcome(self):
+        pygame.mixer.music.load(PRES)
+        pygame.mixer.music.play(1)
         self.erase()
         self.phase = 0
         welcome = Label(self,bg = "black", fg = "red" ,font=("Courier New", 30),text="Welcome to")
@@ -464,10 +466,11 @@ class Wires(NumericPhase):
                 if (self._value == self._target):
                     self._defused = True
                 # the component state has changed
-                elif (self._value != self._prev_value):
-                    # one or more component states are incorrect -> phase failed (strike)
-                    if (not self._check_state()):
-                        strikes_left = 0
+            elif (self._value != self._prev_value):
+                # one or more component states are incorrect -> phase failed (strike)
+                if (not self._check_state()):
+                    strikes_left = 1
+                    self._failed = True
                 # note the updated state
             self._prev_value = self._value
                 
