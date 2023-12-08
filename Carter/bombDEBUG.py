@@ -223,6 +223,7 @@ class Lcd(Frame):
         # the appropriate (success/explode) image
         if (success):
             self.img = PhotoImage(file=SUCCESS[0])
+            self.img = self.img.subsample(2,2)
 
         else:
             self.img = PhotoImage(file=EXPLODE[0])

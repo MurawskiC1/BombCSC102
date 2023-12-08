@@ -8,15 +8,15 @@
 DEBUG = True        # debug mode?
 RPi = True        # is this running on the RPi?
 ANIMATE = False       # animate the LCD text?
-SHOW_BUTTONS = True # show the Pause and Quit buttons on the main LCD GUI?
+SHOW_BUTTONS = False # show the Pause and Quit buttons on the main LCD GUI?
 COUNTDOWN = 520     # the initial bomb countdown value (seconds)
 NUM_STRIKES = 5      # the total strikes allowed before the bomb "explodes"
 NUM_PHASES = 4       # the total number of initial active bomb phases
 # the various image and audio files
 EXPLODE = [ "./images/trump_tank.png", "./audio/FCHUEY.mp3" ]
-SUCCESS = [ "./images/success.png", "./audio/07 Hail to the Chief.mp3" ]
+SUCCESS = [ "./images/obamaprisim.png", "./audio/07 Hail to the Chief.mp3" ]
 EXPLODING = "./audio/exploding.mp3"
-STRIKE = "./audio/strike.mp3"
+STRIKE = "./audio/Donald Trump - You're Fired Sound Effect.mp3"
 DEFUSED = "./audio/Eagle.mp3"
 TICK = "./audio/tick.mp3"
 PRES = "./audio/07 Hail to the Chief.mp3"
