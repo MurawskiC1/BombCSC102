@@ -398,7 +398,9 @@ class Keypad(PhaseThread):
 
     # runs the thread
     def run(self):
+        global keypadI
         crack = False
+        
         self._running = True
         while (self._running):
             # process keys when keypad key(s) are pressed
@@ -414,26 +416,26 @@ class Keypad(PhaseThread):
                 # log the key
                 self._value += str(key)
                 if gui.phase == 1:
-                    ipass = "62262"
                     gui.start_password.configure(text = f"{self._value}")
                     if key == "#":
                         gui.start_password.configure(text = "")
                         if crack == False:
-                            if (self._value == f"{ipass}#"):
+                            if (self._value == f"{keypadI}#"):
                                 gui.setupBoot()
                                 crack = True
                             self._value = ""        
                     
                 if gui.phase == 2 or gui.phase == 3:
                     # the combination is correct -> phase defused
+                    
                     if key == "#":
-                        if (self._value == self._target):
+                        if (self._value == f"{self._target}#"):
                             self._defused = True
                         # the combination is incorrect -> phase failed (strike)
-                        elif (self._value != self._target):
+                        elif (self._value != self._target) and crack == 3:
                             self._failed = True
                         self._value = ""
-                
+                    crack = 3
             sleep(0.1)
 
     # returns the keypad combination as a string
@@ -449,22 +451,25 @@ class Wires(NumericPhase):
         super().__init__(name, component, target, display_length)
     # runs the thread
     def run(self):
+        global wireI
         self._running = True
         while (self._running):
             # get the component value
             self._value = self._get_int_state()
             # the component value is correct -> phase defused
-            if gui.phase >= 2:
+            if gui.phase == 2:
+                if (self._value == wireI):
+                    gui.obamaDisplay()
+            if gui.phase ==3:
                 if (self._value == self._target):
                     self._defused = True
-                    gui.obamaDisplay()
                 # the component state has changed
                 elif (self._value != self._prev_value):
                     # one or more component states are incorrect -> phase failed (strike)
                     if (not self._check_state()):
                         self._failed = True
-                    # note the updated state
-                    self._prev_value = self._value
+                # note the updated state
+            self._prev_value = self._value
                 
             sleep(0.1)
     # returns the jumper wires state as a string
@@ -497,14 +502,14 @@ class Button(PhaseThread):
         self._color = n
     # runs the thread
     def run(self):
-        global qcount
+        global qcount, passS
         seen = False
         
         self._running = True
         start = 0
         end = 0 
         p =''
-        password = 'michelleobama'
+        password = passS
         q = Queue()
         for i in password:
             q.enqueue(i)
@@ -817,4 +822,3 @@ exploding = False
 
 # display the LCD GUI
 window.mainloop()
-

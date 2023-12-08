@@ -420,7 +420,6 @@ class Keypad(PhaseThread):
                 
                 # the combination is correct -> phase defused
                 if gui.phase == 1 and cracked == False:
-                    target = "62262"
                     if key == "#":
                         gui.start_password.configure(text = f"{self._value}")
                         if (self._value == "62262#"):

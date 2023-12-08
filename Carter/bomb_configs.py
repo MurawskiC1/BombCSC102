@@ -9,7 +9,7 @@ DEBUG = True        # debug mode?
 RPi = True        # is this running on the RPi?
 ANIMATE = False       # animate the LCD text?
 SHOW_BUTTONS = True # show the Pause and Quit buttons on the main LCD GUI?
-COUNTDOWN = 120     # the initial bomb countdown value (seconds)
+COUNTDOWN = 520     # the initial bomb countdown value (seconds)
 NUM_STRIKES = 5      # the total strikes allowed before the bomb "explodes"
 NUM_PHASES = 4       # the total number of initial active bomb phases
 # the various image and audio files
@@ -238,7 +238,7 @@ q10 = Question(" If I gave you the binary represensation of 00101001 what is the
 riddles =["Question",[q1,q2,q3,q4,q5,q6,q7,q8,q9,q10],"answer"]
 
 fra = []
-toggles_target = 9
+toggles_target = choice([1,4,8,5,9,13,12])
 temp = toggles_target
 qcount = 0
 
@@ -269,15 +269,29 @@ if (temp -1) >=0:
 #  keypad_target: the keypad phase defuse value (combination)
 #  passphrase: the target plaintext passphrase
 keyword, cipher_keyword, rot, keypad_target, passphrase = genKeypadCombination()
-keypad_target = "1234#"
+
 # generate the color of the pushbutton (which determines how to defuse the phase)
 button_color = "B"
 # appropriately set the target (R is None)
 button_target = None
 # G is the first numeric digit in the serial number
 
-wires_target=15
+g1 = ["62262",14,12,"64243553","Michelle"]
+g2 = ["733",6,2,"24336","Biden"]
+g3 = ["94483", 28,20,"12132010","12/13/2010"]
+g4 = ["2583", 11,3,"4455279","Hillary"]
+g5 = ["872",1,0,"10072001","10/07/2001"]
 
+
+
+
+pword = choice([g1,g2,g3,g4,g5])
+pword = g2
+keypadI =pword[0] 
+wireI=pword[1]
+wires_target=pword[2]
+keypad_target=pword[3]
+passS = pword[4]
 if (DEBUG):
     print(f"Serial number: {serial}")
     print(f"Toggles target: {bin(toggles_target)[2:].zfill(4)}/{toggles_target}")
